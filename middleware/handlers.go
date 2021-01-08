@@ -60,7 +60,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("/search")
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Println("Body: ", string(requestBody))
-	metrics := []string{"AbnormalEventLatestTable", "DO-Singlestat", "AO-Singlestat"}
+	metrics := []string{"AbnormalEventLatestTable", "DO-Singlestat", "AO-Singlestat", sfcWorkOrders}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(metrics)
 }
