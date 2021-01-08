@@ -83,6 +83,8 @@ func Query(w http.ResponseWriter, r *http.Request) {
 				grafnaResponseArray = append(grafnaResponseArray, abnormalOverviewSinglestat())
 			case "DO-Singlestat":
 				grafnaResponseArray = append(grafnaResponseArray, deviceOverviewSinglestat())
+			case sfcWorkOrders:
+				grafnaResponseArray = append(grafnaResponseArray, findWorkOrders())
 			}
 		}
 	}

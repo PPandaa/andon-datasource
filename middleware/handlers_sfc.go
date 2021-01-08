@@ -6,7 +6,7 @@ var (
 	sfcWorkOrders = "sfc_workorders"
 )
 
-func FindWorkOrders() map[string]interface{} {
+func findWorkOrders() map[string]interface{} {
 	session := createMongoSession()
 	username, password, database := getDBInfo()
 	db := session.DB(database)
