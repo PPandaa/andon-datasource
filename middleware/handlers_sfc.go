@@ -1,9 +1,11 @@
 package middleware
 
-import "log"
+import (
+	"log"
+)
 
 var (
-	sfcWorkOrders = "sfc_workorders"
+	SfcWorkOrder = "SfcWorkOrder"
 )
 
 func findWorkOrders() map[string]interface{} {
@@ -12,7 +14,7 @@ func findWorkOrders() map[string]interface{} {
 	db := session.DB(database)
 	db.Login(username, password)
 
-	collection := "iii.sfc.workoder"
+	collection := "iii.sfc.workorder"
 
 	var Results []map[string]interface{}
 	var Rows [][]interface{}
@@ -21,7 +23,7 @@ func findWorkOrders() map[string]interface{} {
 	if err != nil {
 		log.Println(err)
 	}
-	// fmt.Println("Result: ", result)
+	// fmt.Println("Results: ", Results)
 
 	for _, result := range Results {
 		// var result map[string]interface{}
