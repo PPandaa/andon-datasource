@@ -60,7 +60,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("/search")
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Println("Body: ", string(requestBody))
-	metrics := []string{"AbnormalEventLatestTable", "DO-Singlestat", "AO-Singlestat", sfcWorkOrders}
+	metrics := []string{"AbnormalEventLatestTable", "DO-Singlestat", "AO-Singlestat", SfcWorkOrderInfo, SfcWorkOrderList}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(metrics)
 }
@@ -83,9 +83,12 @@ func Query(w http.ResponseWriter, r *http.Request) {
 				grafnaResponseArray = append(grafnaResponseArray, abnormalOverviewSinglestat())
 			case "DO-Singlestat":
 				grafnaResponseArray = append(grafnaResponseArray, deviceOverviewSinglestat())
-			case sfcWorkOrders:
-				grafnaResponseArray = append(grafnaResponseArray, findWorkOrders())
+			case SfcWorkOrderInfo:
+				grafnaResponseArray = append(grafnaResponseArray, findWorkOrderInfo())
+			case SfcWorkOrderList:
+				grafnaResponseArray = append(grafnaResponseArray, findWorkOrderList())
 			}
+
 		}
 	}
 	// jsonStr, _ := json.Marshal(grafnaResponseArray)
