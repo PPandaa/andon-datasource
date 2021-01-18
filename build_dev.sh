@@ -2,7 +2,7 @@
 
 # 正式用
 VERSION="dev"
-CONTAINER="andon-datasource"
+CONTAINER="sfc-datasource"
 
 # docker location
 DOCKER_REPO="any99147/$CONTAINER"

@@ -84,9 +84,9 @@ func Query(w http.ResponseWriter, r *http.Request) {
 			case "DO-Singlestat":
 				grafnaResponseArray = append(grafnaResponseArray, deviceOverviewSinglestat())
 			case SfcWorkOrderInfo:
-				grafnaResponseArray = append(grafnaResponseArray, findWorkOrderInfo())
+				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrderInfo())
 			case SfcWorkOrderList:
-				grafnaResponseArray = append(grafnaResponseArray, findWorkOrderList())
+				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrder())
 			}
 
 		}

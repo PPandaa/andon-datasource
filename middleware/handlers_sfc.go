@@ -21,7 +21,7 @@ var (
 )
 
 //deprecated
-func findWorkOrderList() map[string]interface{} {
+func GetWorkOrder() map[string]interface{} {
 	// session := createMongoSession()
 	// username, password, database := getDBInfo()
 	// db := session.DB(database)
@@ -37,7 +37,7 @@ func findWorkOrderList() map[string]interface{} {
 	// 	log.Println(err)
 	// }
 	trigger := func(i interface{}) ([]byte, error) {
-		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorder_list"
+		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorders"
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
@@ -92,9 +92,9 @@ func findWorkOrderList() map[string]interface{} {
 	return grafanaData
 }
 
-func findWorkOrderInfo() map[string]interface{} {
+func GetWorkOrderInfo() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
-		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorder/info"
+		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorders/info"
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
@@ -110,21 +110,25 @@ func findWorkOrderInfo() map[string]interface{} {
 	var Results []map[string]interface{}
 	var Rows [][]interface{}
 	Results = JsonAryToMap(res)
+
 	for _, result := range Results {
 		// var result map[string]interface{}
 		var row []interface{}
 		row = append(row, result["WorkOrderId"])
-		row = append(row, result["Station"])
-
-		row = append(row, result["ProductID"])
-		row = append(row, result["Product"])
-
 		row = append(row, result["Quantity"])
+		// row = append(row, result["Station"])
+
+		row = append(row, result["Product"].(map[string]interface{})["ProductId"])
+		row = append(row, result["Product"].(map[string]interface{})["ProductName"])
+		row = append(row, result["Product"].(map[string]interface{})["StationType"])
+
+		row = append(row, result["CompletedQty"])
+		row = append(row, result["NonGoodQty"])
+		row = append(row, result["GoodQty"])
+		row = append(row, result["GoodProductQty"])
+		row = append(row, result["GoodQtyRate"])
+
 		row = append(row, result["Status"])
-		row = append(row, result["Sum"])
-		row = append(row, result["SumGood"])
-		row = append(row, result["SumNonGood"])
-		row = append(row, result["GoodRate"])
 
 		row = append(row, result["PlanStartDate"])
 		row = append(row, result["DeliverAt"])
@@ -134,17 +138,20 @@ func findWorkOrderInfo() map[string]interface{} {
 
 	columns := []map[string]string{
 		{"text": "WorkOrderId", "type": "string"},
-		{"text": "Station", "type": "string"},
-
-		{"text": "ProductID", "type": "string"},
-		{"text": "Product", "type": "string"},
-
 		{"text": "Quantity", "type": "string"},
+		// {"text": "Station", "type": "string"},
+
+		{"text": "ProductId", "type": "string"},
+		{"text": "ProductName", "type": "string"},
+		{"text": "StationType", "type": "string"},
+
+		{"text": "CompletedQty", "type": "string"},
+		{"text": "NonGoodQty", "type": "string"},
+		{"text": "GoodQty", "type": "string"},
+		{"text": "GoodProductQty", "type": "string"},
+		{"text": "GoodQtyRate", "type": "string"},
+
 		{"text": "Status", "type": "string"},
-		{"text": "Sum", "type": "string"},
-		{"text": "SumGood", "type": "string"},
-		{"text": "SumNonGood", "type": "string"},
-		{"text": "GoodRate", "type": "string"},
 
 		{"text": "PlanStartDate", "type": "string"},
 		{"text": "DeliverAt", "type": "string"},
@@ -161,7 +168,7 @@ func findWorkOrderInfo() map[string]interface{} {
 }
 
 func Runtest() {
-	findWorkOrderInfo()
+	GetWorkOrderInfo()
 }
 
 //-------------------------------------
