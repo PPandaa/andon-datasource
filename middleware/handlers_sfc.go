@@ -94,7 +94,7 @@ func GetWorkOrder() map[string]interface{} {
 
 func GetWorkOrderInfo() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
-		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorders/info"
+		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorders?detail=true"
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
