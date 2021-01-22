@@ -17,7 +17,7 @@ const (
 )
 
 func main() {
-	middleware.Runtest()
+	middleware.TestDatasourceFn()
 	log.Println("Activation")
 	err := godotenv.Load(envName)
 	if err != nil {

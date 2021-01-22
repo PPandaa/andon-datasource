@@ -16,26 +16,66 @@ import (
 //docker login -u any99147 -p 54P@ssw0rd && ./build_dev.sh
 
 var (
-	SfcWorkOrderInfo = "SfcWorkOrderInfo"
-	SfcWorkOrderList = "SfcWorkOrderList"
+	SfcWorkOrderDetail = "SfcWorkOrderDetail"
+	SfcWorkOrderList   = "SfcWorkOrderList"
+	SfcStatsStation    = "SfcStatsStation"
 )
 
 //deprecated
-func GetWorkOrder() map[string]interface{} {
-	// session := createMongoSession()
-	// username, password, database := getDBInfo()
-	// db := session.DB(database)
-	// db.Login(username, password)
+func GetStats() map[string]interface{} {
+	trigger := func(i interface{}) ([]byte, error) {
+		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/stats?groupBy=station"
+		//convert object to json
+		param := req.BodyJSON(&i)
+		//res就是打api成功拿到的response, 如果打失敗則拿到err
+		res, err := DoAPI("GET", url, param)
+		if err != nil {
+			return nil, err
+		}
+		return res, nil
+	}
 
-	// collection := "iii.sfc.workorder_list"
+	res, _ := trigger(nil)
 
-	// var Results []map[string]interface{}
-	// var Rows [][]interface{}
+	var Results []map[string]interface{}
+	var Rows [][]interface{}
+	Results = JsonAryToMap(res)
 
-	// err := db.C(collection).Find(nil).All(&Results)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
+	for _, result := range Results {
+		// var result map[string]interface{}
+		var row []interface{}
+		row = append(row, result["WorkOrderId"])
+		row = append(row, result["StationName"])
+		row = append(row, result["CompletedQty"])
+
+		row = append(row, result["Quantity"])
+		row = append(row, result["RealCompletedRate"])
+		row = append(row, result["Status"])
+
+		Rows = append(Rows, row)
+	}
+
+	columns := []map[string]string{
+		{"text": "WorkOrderId", "type": "string"},
+		{"text": "StationName", "type": "string"},
+		{"text": "CompletedQty", "type": "string"},
+
+		{"text": "Quantity", "type": "string"},
+		{"text": "RealCompletedRate", "type": "string"},
+		{"text": "Status", "type": "string"},
+	}
+
+	grafanaData := map[string]interface{}{
+		"columns": columns,
+		"rows":    Rows,
+		"type":    "table",
+	}
+
+	return grafanaData
+}
+
+//deprecated
+func GetWorkOrderList() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
 		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorders"
 		//convert object to json
@@ -92,7 +132,7 @@ func GetWorkOrder() map[string]interface{} {
 	return grafanaData
 }
 
-func GetWorkOrderInfo() map[string]interface{} {
+func GetWorkOrderDetail() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
 		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorders?detail=true"
 		//convert object to json
@@ -167,8 +207,9 @@ func GetWorkOrderInfo() map[string]interface{} {
 	return grafanaData
 }
 
-func Runtest() {
-	GetWorkOrderInfo()
+func TestDatasourceFn() {
+	// GetWorkOrderDetail()
+	// GetStats()
 }
 
 //-------------------------------------

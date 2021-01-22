@@ -60,7 +60,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("/search")
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Println("Body: ", string(requestBody))
-	metrics := []string{"AbnormalEventLatestTable", "DO-Singlestat", "AO-Singlestat", SfcWorkOrderInfo, SfcWorkOrderList}
+	metrics := []string{"AbnormalEventLatestTable", "DO-Singlestat", "AO-Singlestat", SfcWorkOrderDetail, SfcWorkOrderList, SfcStatsStation}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(metrics)
 }
@@ -83,10 +83,12 @@ func Query(w http.ResponseWriter, r *http.Request) {
 				grafnaResponseArray = append(grafnaResponseArray, abnormalOverviewSinglestat())
 			case "DO-Singlestat":
 				grafnaResponseArray = append(grafnaResponseArray, deviceOverviewSinglestat())
-			case SfcWorkOrderInfo:
-				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrderInfo())
+			case SfcWorkOrderDetail:
+				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrderDetail())
 			case SfcWorkOrderList:
-				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrder())
+				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrderList())
+			case SfcStatsStation:
+				grafnaResponseArray = append(grafnaResponseArray, GetStats())
 			}
 
 		}
