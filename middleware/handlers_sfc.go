@@ -11,6 +11,7 @@ import (
 	"github.com/imroc/req"
 	"github.com/logrusorgru/aurora"
 	. "github.com/logrusorgru/aurora"
+	"github.com/tidwall/gjson"
 )
 
 //docker login -u any99147 -p 54P@ssw0rd && ./build_dev.sh
@@ -74,7 +75,6 @@ func GetStats() map[string]interface{} {
 	return grafanaData
 }
 
-//deprecated
 func GetWorkOrderList() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
 		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorders"
@@ -92,34 +92,31 @@ func GetWorkOrderList() map[string]interface{} {
 
 	var Results []map[string]interface{}
 	var Rows [][]interface{}
-	Results = JsonAryToMap(res)
 
-	for _, result := range Results {
-		// var result map[string]interface{}
-		var row []interface{}
-		row = append(row, result["WorkOrderId"])
-		row = append(row, result["Station"])
-		row = append(row, result["Machine"])
-
-		row = append(row, result["Good"])
-		row = append(row, result["NonGood"])
-		row = append(row, result["Quantity"])
-
-		row = append(row, result["Reporter"])
-		row = append(row, result["CreateAt"])
-		Rows = append(Rows, row)
+	//method2
+	gj := gjson.GetBytes(res, "#.WorkOrderList")
+	for _, wols := range gj.Array() {
+		// for _, wol := range wols.Array() {
+		// }
+		Results = JsonAryToMap([]byte(wols.Raw))
+		for _, result := range Results {
+			var row []interface{}
+			row = append(row, result["WorkOrderId"])
+			row = append(row, result["Reporter"])
+			row = append(row, result["StationName"])
+			row = append(row, result["CompletedQty"])
+			row = append(row, result["NonGoodQty"])
+			row = append(row, result["CreateAt"])
+			Rows = append(Rows, row)
+		}
 	}
 
 	columns := []map[string]string{
 		{"text": "WorkOrderId", "type": "string"},
-		{"text": "Station", "type": "string"},
-		{"text": "Machine", "type": "string"},
-
-		{"text": "Good", "type": "string"},
-		{"text": "NonGood", "type": "string"},
-		{"text": "Quantity", "type": "string"},
-
 		{"text": "Reporter", "type": "string"},
+		{"text": "StationName", "type": "string"},
+		{"text": "CompletedQty", "type": "string"},
+		{"text": "NonGoodQty", "type": "string"},
 		{"text": "CreateAt", "type": "string"},
 	}
 
@@ -155,7 +152,6 @@ func GetWorkOrderDetail() map[string]interface{} {
 		// var result map[string]interface{}
 		var row []interface{}
 		row = append(row, result["WorkOrderId"])
-		row = append(row, result["Quantity"])
 		// row = append(row, result["Station"])
 
 		row = append(row, result["Product"].(map[string]interface{})["ProductId"])
@@ -165,8 +161,9 @@ func GetWorkOrderDetail() map[string]interface{} {
 		row = append(row, result["CompletedQty"])
 		row = append(row, result["NonGoodQty"])
 		row = append(row, result["GoodQty"])
-		row = append(row, result["GoodProductQty"])
 		row = append(row, result["GoodQtyRate"])
+		row = append(row, result["GoodProductQty"])
+		row = append(row, result["Quantity"])
 
 		row = append(row, result["Status"])
 
@@ -178,7 +175,6 @@ func GetWorkOrderDetail() map[string]interface{} {
 
 	columns := []map[string]string{
 		{"text": "WorkOrderId", "type": "string"},
-		{"text": "Quantity", "type": "string"},
 		// {"text": "Station", "type": "string"},
 
 		{"text": "ProductId", "type": "string"},
@@ -188,8 +184,9 @@ func GetWorkOrderDetail() map[string]interface{} {
 		{"text": "CompletedQty", "type": "string"},
 		{"text": "NonGoodQty", "type": "string"},
 		{"text": "GoodQty", "type": "string"},
-		{"text": "GoodProductQty", "type": "string"},
 		{"text": "GoodQtyRate", "type": "string"},
+		{"text": "GoodProductQty", "type": "string"},
+		{"text": "Quantity", "type": "string"},
 
 		{"text": "Status", "type": "string"},
 
@@ -210,6 +207,7 @@ func GetWorkOrderDetail() map[string]interface{} {
 func TestDatasourceFn() {
 	// GetWorkOrderDetail()
 	// GetStats()
+	GetWorkOrderList()
 }
 
 //-------------------------------------
