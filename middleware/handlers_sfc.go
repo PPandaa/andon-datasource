@@ -47,10 +47,14 @@ func GetStats() map[string]interface{} {
 		var row []interface{}
 		row = append(row, result["WorkOrderId"])
 		row = append(row, result["StationName"])
-		row = append(row, result["CompletedQty"])
 
+		row = append(row, result["CompletedQty"])
+		row = append(row, result["ToBeCompleted"])
 		row = append(row, result["Quantity"])
+
 		row = append(row, result["RealCompletedRate"])
+		row = append(row, result["EstiCompletedRate"])
+
 		row = append(row, result["Status"])
 
 		Rows = append(Rows, row)
@@ -59,10 +63,14 @@ func GetStats() map[string]interface{} {
 	columns := []map[string]string{
 		{"text": "WorkOrderId", "type": "string"},
 		{"text": "StationName", "type": "string"},
-		{"text": "CompletedQty", "type": "string"},
 
+		{"text": "CompletedQty", "type": "string"},
+		{"text": "ToBeCompleted", "type": "string"},
 		{"text": "Quantity", "type": "string"},
+
 		{"text": "RealCompletedRate", "type": "string"},
+		{"text": "EstiCompletedRate", "type": "string"},
+
 		{"text": "Status", "type": "string"},
 	}
 
