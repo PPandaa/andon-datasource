@@ -5,7 +5,7 @@ VERSION="latest"
 CONTAINER="sfc-datasource"
 
 # docker location
-DOCKER_REPO="any99147/$CONTAINER"
+DOCKER_REPO="iiicondor/$CONTAINER"
 
 docker build -t $DOCKER_REPO:$VERSION .
 # docker push $DOCKER_REPO:$VERSION

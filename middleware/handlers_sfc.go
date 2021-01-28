@@ -20,12 +20,35 @@ var (
 	SfcWorkOrderDetail = "SfcWorkOrderDetail"
 	SfcWorkOrderList   = "SfcWorkOrderList"
 	SfcStatsStation    = "SfcStatsStation"
+	SfcCounts          = "SfcCounts"
 )
 
-//deprecated
-func GetStats() map[string]interface{} {
+func GetCounts() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
-		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/stats?groupBy=station"
+		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/grafana/counts"
+		//convert object to json
+		param := req.BodyJSON(&i)
+		//res就是打api成功拿到的response, 如果打失敗則拿到err
+		res, err := DoAPI("GET", url, param)
+		if err != nil {
+			return nil, err
+		}
+		return res, nil
+	}
+	res, _ := trigger(nil)
+
+	var grafanaData map[string]interface{}
+	err := json.Unmarshal(res, &grafanaData)
+	if err != nil {
+		glog.Error(err)
+	}
+
+	return grafanaData
+}
+
+func GetTables() map[string]interface{} {
+	trigger := func(i interface{}) ([]byte, error) {
+		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/grafana/tables?groupBy=station"
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
@@ -49,7 +72,7 @@ func GetStats() map[string]interface{} {
 		row = append(row, result["StationName"])
 
 		row = append(row, result["CompletedQty"])
-		row = append(row, result["ToBeCompleted"])
+		row = append(row, result["ToBeCompletedQty"])
 		row = append(row, result["Quantity"])
 
 		row = append(row, result["RealCompletedRate"])
@@ -65,7 +88,7 @@ func GetStats() map[string]interface{} {
 		{"text": "StationName", "type": "string"},
 
 		{"text": "CompletedQty", "type": "string"},
-		{"text": "ToBeCompleted", "type": "string"},
+		{"text": "ToBeCompletedQty", "type": "string"},
 		{"text": "Quantity", "type": "string"},
 
 		{"text": "RealCompletedRate", "type": "string"},
