@@ -1,6 +1,7 @@
 package main
 
 import (
+	"andon-datasource/middleware"
 	"andon-datasource/router"
 	"fmt"
 	"log"
@@ -22,6 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error loading env file")
 	}
+	middleware.Start()
 	mongodbURL := os.Getenv("MONGODB_URL")
 	mongodbDatabase := os.Getenv("MONGODB_DATABASE")
 	fmt.Println("Version ->", "2021/1/7 16:07")

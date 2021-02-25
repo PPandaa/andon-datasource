@@ -24,7 +24,11 @@ var (
 	SfcCounts          = "SfcCounts"
 )
 
-var apiUrl = os.Getenv("API_URL")
+var apiUrl string
+
+func Start() {
+	apiUrl = os.Getenv("API_URL")
+}
 
 func GetCounts() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
