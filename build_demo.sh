@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 正式用
-VERSION="latest"
-CONTAINER="sfc-datasource"
+VERSION="demo"
+CONTAINER="ifps-sfc-datasource"
 
 # docker location
 DOCKER_REPO="iiicondor/$CONTAINER"

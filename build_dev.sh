@@ -2,7 +2,7 @@
 
 # 正式用
 VERSION="dev"
-CONTAINER="sfc-datasource"
+CONTAINER="ifps-sfc-datasource"
 
 # docker location
 DOCKER_REPO="iiicondor/$CONTAINER"

@@ -71,6 +71,8 @@ func GetTables() map[string]interface{} {
 		row = append(row, result["WorkOrderId"])
 		row = append(row, result["StationName"])
 
+		row = append(row, result["GoodQty"])
+		row = append(row, result["NonGoodQty"])
 		row = append(row, result["CompletedQty"])
 		row = append(row, result["ToBeCompletedQty"])
 		row = append(row, result["Quantity"])
@@ -87,6 +89,8 @@ func GetTables() map[string]interface{} {
 		{"text": "WorkOrderId", "type": "string"},
 		{"text": "StationName", "type": "string"},
 
+		{"text": "GoodQty", "type": "string"},
+		{"text": "NonGoodQty", "type": "string"},
 		{"text": "CompletedQty", "type": "string"},
 		{"text": "ToBeCompletedQty", "type": "string"},
 		{"text": "Quantity", "type": "string"},
