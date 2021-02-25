@@ -3,6 +3,7 @@ package middleware
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -23,9 +24,11 @@ var (
 	SfcCounts          = "SfcCounts"
 )
 
+var apiUrl = os.Getenv("API_URL")
+
 func GetCounts() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
-		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/grafana/counts"
+		url := apiUrl + "/grafana/counts"
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
@@ -48,7 +51,7 @@ func GetCounts() map[string]interface{} {
 
 func GetTables() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
-		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/grafana/tables?groupBy=station"
+		url := apiUrl + "/grafana/tables?groupBy=station"
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
@@ -112,7 +115,7 @@ func GetTables() map[string]interface{} {
 
 func GetWorkOrderList() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
-		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorders"
+		url := apiUrl + "/workorders"
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
@@ -166,7 +169,7 @@ func GetWorkOrderList() map[string]interface{} {
 
 func GetWorkOrderDetail() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
-		url := "https://andon-daemon-compute-ifactoryandondev-eks005.sa.wise-paas.com/workorders?detail=true"
+		url := apiUrl + "/workorders?detail=true"
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err

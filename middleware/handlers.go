@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	envName = "dev.env"
+	envName = "demo.env"
 )
 
 func getDBInfo() (string, string, string) {
