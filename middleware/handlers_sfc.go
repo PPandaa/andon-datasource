@@ -245,7 +245,7 @@ func GetWorkOrderDetail() map[string]interface{} {
 func TestDatasourceFn() {
 	// GetWorkOrderDetail()
 	// GetStats()
-	GetWorkOrderList()
+	// GetWorkOrderList()
 }
 
 //-------------------------------------

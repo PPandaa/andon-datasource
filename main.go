@@ -1,7 +1,6 @@
 package main
 
 import (
-	"andon-datasource/middleware"
 	"andon-datasource/router"
 	"fmt"
 	"log"
@@ -17,7 +16,7 @@ const (
 )
 
 func main() {
-	middleware.TestDatasourceFn()
+	// middleware.TestDatasourceFn()
 	log.Println("Activation")
 	err := godotenv.Load(envName)
 	if err != nil {
