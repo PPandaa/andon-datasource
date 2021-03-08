@@ -60,7 +60,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("/search")
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Println("Body: ", string(requestBody))
-	metrics := []string{"AbnormalEventLatestTable", "DO-Singlestat", "AO-Singlestat", SfcWorkOrderDetail, SfcWorkOrderList, SfcStatsStation, SfcCounts}
+	metrics := []string{"AbnormalEventLatestTable", "DO-Singlestat", "AO-Singlestat", SfcWorkOrderDetail, SfcWorkOrderList, SfcStatsStation, SfcCounts, SfcSwitchingPanelWorkorderIds}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(metrics)
 }
@@ -99,6 +99,11 @@ func Query(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println(grafnaResponseArray)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(grafnaResponseArray)
+}
+
+func GetWorkorderIds(w http.ResponseWriter, r *http.Request) {
+	res := getWorkorderIds()
+	json.NewEncoder(w).Encode(res)
 }
 
 func abnormalEventLatestTable() map[string]interface{} {

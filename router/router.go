@@ -15,6 +15,8 @@ func Router() *mux.Router {
 	router.HandleFunc("/search", middleware.Search).Methods("POST", "OPTIONS")
 	router.HandleFunc("/query", middleware.Query).Methods("POST", "OPTIONS")
 
+	router.HandleFunc("/switchingPanel/workorderIds", middleware.GetWorkorderIds).Methods("GET", "OPTIONS")
+
 	return router
 
 }
