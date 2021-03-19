@@ -1,0 +1,13 @@
+[2021-03-04 19:25:33] 1.0.2 => dev
+[2021-03-04 19:27:25] 1.0.2 => demo
+[2021-03-05 14:09:08] 1.0.2 => dev {Change eventHist -> add TD,TR}
+[2021-03-09 14:44:36] 1.0.2 => dev {Change GetGroup -> add parentID in request body}
+[2021-03-09 14:58:18] 1.0.2 => dev {Change Naming -> add parentID,groupID }
+[2021-03-09 15:07:41] 1.0.2 => dev {Change GetGroup,GetMachine -> add xxxID='ALL' }
+[2021-03-09 16:14:23] 1.0.2 => dev {Change GetGroup,GetMachine -> add response from null to []}
+[2021-03-10 14:19:39] 1.0.2 => dev {add GetAssignee -> new}
+[2021-03-18 16:21:50] 1.0.2 => dev {add v3MeanTimeCompute -> new}
+[2021-03-18 16:28:48] 1.0.2 => dev {change v3MeanTimeCompute -> add {len(result) != 0}}
+[2021-03-18 16:39:07] 1.0.2 => dev {change Query -> add {.In(config.TaipeiTimeZone)}}
+[2021-03-19 17:02:32] 1.0.2 => dev {change v3MeanTimeCompute -> add {nonZeroValueRow,zeroValueRow}}
+[2021-03-19 17:20:41] 1.0.2 => demo

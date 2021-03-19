@@ -1,32 +1,48 @@
 package main
 
 import (
-	"andon-datasource/middleware"
-	"andon-datasource/router"
+	"DataSource/config"
+	"DataSource/router"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
+	"gopkg.in/mgo.v2"
 )
 
-const (
-	envName = "dev.env"
-)
-
-func main() {
-	middleware.Runtest()
-	log.Println("Activation")
-	err := godotenv.Load(envName)
+func initGlobalVar() {
+	err := godotenv.Load(config.EnvName)
 	if err != nil {
 		log.Fatalf("Error loading env file")
 	}
-	mongodbURL := os.Getenv("MONGODB_URL")
-	mongodbDatabase := os.Getenv("MONGODB_DATABASE")
-	fmt.Println("Version ->", "2021/1/7 16:07")
-	fmt.Println("MongoDB ->", "URL:", mongodbURL, " Database:", mongodbDatabase)
+
+	config.MongodbURL = os.Getenv("MONGODB_URL")
+	config.MongodbDatabase = os.Getenv("MONGODB_DATABASE")
+	config.MongodbUsername = os.Getenv("MONGODB_USERNAME")
+	config.MongodbPassword = os.Getenv("MONGODB_PASSWORD")
+
+	newSession, err := mgo.Dial(config.MongodbURL)
+	if err != nil {
+		fmt.Println("----------", time.Now().In(config.TaipeiTimeZone), "----------")
+		fmt.Println("MongoDB", err, "->", "URL:", config.MongodbURL, " Database:", config.MongodbDatabase)
+		for err != nil {
+			newSession, err = mgo.Dial(config.MongodbURL)
+			time.Sleep(5 * time.Second)
+		}
+	}
+	config.Session = newSession
+	config.DB = config.Session.DB(config.MongodbDatabase)
+	config.DB.Login(config.MongodbUsername, config.MongodbPassword)
+	fmt.Println("----------", time.Now().In(config.TaipeiTimeZone), "----------")
+	fmt.Println("MongoDB Connect ->", " URL:", config.MongodbURL, " Database:", config.MongodbDatabase)
+}
+
+func main() {
+	initGlobalVar()
 	r := router.Router()
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
