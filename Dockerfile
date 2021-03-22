@@ -1,6 +1,6 @@
 FROM golang:1.13-buster as build
 
-WORKDIR /go/src/datasource
+WORKDIR /go/src/ifps-andon-datasource
 ADD . .
 
 RUN go mod download
