@@ -564,10 +564,22 @@ func eventHist(groupID string, machineID string) map[string]interface{} {
 		row = append(row, result["ProcessingStatusCode"])
 		row = append(row, result["ProcessingProgress"])
 		row = append(row, result["AbnormalStartTime"])
-		row = append(row, result["RepairStartTime"].(time.Time).Sub(result["AbnormalStartTime"].(time.Time)).Seconds())
-		row = append(row, result["RepairStartTime"])
-		row = append(row, result["CompleteTime"].(time.Time).Sub(result["RepairStartTime"].(time.Time)).Seconds())
-		row = append(row, result["CompleteTime"])
+		if result["ProcessingStatusCode"].(int) == 5 {
+			if result["RepairStartTime"] != nil {
+				row = append(row, result["RepairStartTime"].(time.Time).Sub(result["AbnormalStartTime"].(time.Time)).Seconds())
+				row = append(row, result["RepairStartTime"])
+			} else {
+				row = append(row, result["AbnormalStartTime"].(time.Time).Sub(result["AbnormalStartTime"].(time.Time)).Seconds())
+				row = append(row, result["AbnormalStartTime"])
+			}
+			row = append(row, result["CompleteTime"].(time.Time).Sub(result["RepairStartTime"].(time.Time)).Seconds())
+			row = append(row, result["CompleteTime"])
+		} else {
+			row = append(row, nil)
+			row = append(row, nil)
+			row = append(row, nil)
+			row = append(row, nil)
+		}
 		row = append(row, result["AbnormalLastingSecond"])
 		row = append(row, result["ShouldRepairTime"])
 		row = append(row, result["PlanRepairTime"])
