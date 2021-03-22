@@ -155,8 +155,8 @@ func Query(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("----------", time.Now().In(config.TaipeiTimeZone), "----------")
 	fmt.Println("/query")
 	requestBody, _ := simplejson.NewFromReader(r.Body)
-	// fmt.Println("Body: ", requestBody)
-	// fmt.Println(requestBody.Get("targets").MustArray())
+	fmt.Println("Body: ", requestBody)
+	fmt.Println(requestBody.Get("targets").MustArray())
 
 	for indexOfTargets := 0; indexOfTargets < len(requestBody.Get("targets").MustArray()); indexOfTargets++ {
 		refID := requestBody.Get("targets").GetIndex(indexOfTargets).Get("refId").MustString()
@@ -186,7 +186,7 @@ func Query(w http.ResponseWriter, r *http.Request) {
 		temp = toUnixTime / 1000
 		toTime := time.Unix(temp, 0)
 		toTime = toTime.In(config.TaipeiTimeZone)
-		fmt.Println("  RefID:", refID, "DataType:", dataType, " GroupID:", groupID, " MachineID:", machineID, " Metrics:", metrics, " From:", fromUnixTime, fromTime.Format(time.RFC3339), " To:", toUnixTime, toTime.Format(time.RFC3339))
+		// fmt.Println("  RefID:", refID, "DataType:", dataType, " GroupID:", groupID, " MachineID:", machineID, " Metrics:", metrics, " From:", fromUnixTime, fromTime.Format(time.RFC3339), " To:", toUnixTime, toTime.Format(time.RFC3339))
 
 		if dataType == "table" {
 			switch metrics {
