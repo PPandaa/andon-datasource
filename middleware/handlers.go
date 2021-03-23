@@ -717,7 +717,11 @@ func machinesFlowCharting(groupID string, refID string) map[string]interface{} {
 		if machineRawDataResult["ManualEvent"].(int) > 0 {
 			row = append(row, 2000)
 		} else {
-			row = append(row, machineRawDataResult["StatusLay1Value"])
+			if machineRawDataResult["StatusLay1Value"] == nil {
+				row = append(row, 4000)
+			} else {
+				row = append(row, machineRawDataResult["StatusLay1Value"])
+			}
 		}
 		columns = append(columns, map[string]string{"text": machineRawDataResult["MachineName"].(string), "type": "string"})
 		// fmt.Println(row)
