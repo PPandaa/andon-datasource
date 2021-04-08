@@ -10,6 +10,7 @@ import (
 
 	"github.com/bitly/go-simplejson"
 	"github.com/joho/godotenv"
+	"github.com/tidwall/gjson"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -74,6 +75,27 @@ func Query(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println(requestBody.Get("targets").MustArray())
 	for indexOfTargets := 0; indexOfTargets < len(requestBody.Get("targets").MustArray()); indexOfTargets++ {
 		target := requestBody.Get("targets").GetIndex(indexOfTargets).Get("target").MustString()
+
+		//yoga
+		var station string
+		var orderId string
+		targetOrderId := requestBody.Get("targets").GetIndex(indexOfTargets).Get("orderId").MustString()
+		if targetOrderId != "" {
+			//get scopedVars OrderId
+			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
+			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "orderId.value").String()
+			fmt.Println("orderId value:", scopedVarsJsonValue)
+			orderId = scopedVarsJsonValue
+		}
+		targetStation := requestBody.Get("station").GetIndex(indexOfTargets).Get("station").MustString()
+		if targetStation != "" {
+			//get scopedVars OrderId
+			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
+			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "station.value").String()
+			fmt.Println("station value:", scopedVarsJsonValue)
+			station = scopedVarsJsonValue
+		}
+
 		dataType := requestBody.Get("targets").GetIndex(indexOfTargets).Get("type").MustString()
 		if dataType == "table" {
 			switch target {
@@ -84,11 +106,11 @@ func Query(w http.ResponseWriter, r *http.Request) {
 			case "DO-Singlestat":
 				grafnaResponseArray = append(grafnaResponseArray, deviceOverviewSinglestat())
 			case SfcWorkOrderDetail:
-				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrderDetail())
+				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrderDetail(orderId, station)) //工單狀態
 			case SfcWorkOrderList:
-				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrderList())
+				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrderList(orderId, station)) //報工紀錄清單
 			case SfcStatsStation:
-				grafnaResponseArray = append(grafnaResponseArray, GetTables())
+				grafnaResponseArray = append(grafnaResponseArray, GetTables()) //工單工站狀態
 			case SfcCounts:
 				grafnaResponseArray = append(grafnaResponseArray, GetCounts())
 			}

@@ -121,7 +121,7 @@ func GetTables() map[string]interface{} {
 }
 
 //報工單紀錄
-func GetWorkOrderList() map[string]interface{} {
+func GetWorkOrderList(station, orderId string) map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
 		url := apiUrl + "/workorders"
 		//convert object to json
@@ -176,7 +176,7 @@ func GetWorkOrderList() map[string]interface{} {
 }
 
 //工單狀態
-func GetWorkOrderDetail() map[string]interface{} {
+func GetWorkOrderDetail(orderId, station string) map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
 		// url := apiUrl + "/workorders?detail=true"
 		url := apiUrl + "/grafana/table/workorderDetail"
@@ -192,11 +192,13 @@ func GetWorkOrderDetail() map[string]interface{} {
 
 	res, _ := trigger(nil)
 	fmt.Println(string(res))
-	m := map[string]interface{}{}
+
+	var m map[string]interface{}
 	err := json.Unmarshal(res, &m)
 	if err != nil {
 		log.Error(err)
 	}
+
 	return m
 
 	var Results []map[string]interface{}
