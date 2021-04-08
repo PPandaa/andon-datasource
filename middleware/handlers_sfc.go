@@ -12,6 +12,7 @@ import (
 	"github.com/imroc/req"
 	"github.com/logrusorgru/aurora"
 	. "github.com/logrusorgru/aurora"
+	"github.com/prometheus/common/log"
 	"github.com/tidwall/gjson"
 )
 
@@ -54,6 +55,7 @@ func GetCounts() map[string]interface{} {
 	return grafanaData
 }
 
+// 工單工站狀態
 func GetTables() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
 		url := apiUrl + "/grafana/tables?groupBy=station"
@@ -118,6 +120,7 @@ func GetTables() map[string]interface{} {
 	return grafanaData
 }
 
+//報工單紀錄
 func GetWorkOrderList() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
 		url := apiUrl + "/workorders"
@@ -172,9 +175,11 @@ func GetWorkOrderList() map[string]interface{} {
 	return grafanaData
 }
 
+//工單狀態
 func GetWorkOrderDetail() map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
-		url := apiUrl + "/workorders?detail=true"
+		// url := apiUrl + "/workorders?detail=true"
+		url := apiUrl + "/grafana/table/workorderDetail"
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
@@ -186,6 +191,13 @@ func GetWorkOrderDetail() map[string]interface{} {
 	}
 
 	res, _ := trigger(nil)
+	fmt.Println(string(res))
+	m := map[string]interface{}{}
+	err := json.Unmarshal(res, &m)
+	if err != nil {
+		log.Error(err)
+	}
+	return m
 
 	var Results []map[string]interface{}
 	var Rows [][]interface{}
@@ -253,6 +265,7 @@ func TestDatasourceFn() {
 	// GetWorkOrderList()
 }
 
+//switchingPanel
 func getWorkorderIds() []map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
 		url := apiUrl + "/grafana/switchingPanel/workorders/id"
