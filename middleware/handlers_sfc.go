@@ -107,6 +107,11 @@ func GetTables(orderId, station string) map[string]interface{} {
 		Rows = append(Rows, row)
 	}
 
+	if len(Rows) == 0 {
+		row := []interface{}{}
+		Rows = append(Rows, row)
+	}
+
 	columns := []map[string]string{
 		{"text": "WorkOrderId", "type": "string"},
 		{"text": "StationName", "type": "string"},
@@ -257,6 +262,11 @@ func GetWorkOrderDetail(orderId, station string) map[string]interface{} {
 		row = append(row, result["PlanStartDate"])
 		row = append(row, result["DeliverAt"])
 		row = append(row, result["CreateAt"])
+		Rows = append(Rows, row)
+	}
+
+	if len(Rows) == 0 {
+		row := []interface{}{}
 		Rows = append(Rows, row)
 	}
 

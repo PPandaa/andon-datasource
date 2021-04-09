@@ -87,7 +87,7 @@ func Query(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("orderId value:", scopedVarsJsonValue)
 			orderId = scopedVarsJsonValue
 		}
-		targetStation := requestBody.Get("station").GetIndex(indexOfTargets).Get("stationId").MustString()
+		targetStation := requestBody.Get("targets").GetIndex(indexOfTargets).Get("stationId").MustString()
 		if targetStation != "" {
 			//get scopedVars OrderId
 			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
