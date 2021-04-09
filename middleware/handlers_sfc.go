@@ -12,7 +12,6 @@ import (
 	"github.com/imroc/req"
 	"github.com/logrusorgru/aurora"
 	. "github.com/logrusorgru/aurora"
-	"github.com/prometheus/common/log"
 	"github.com/tidwall/gjson"
 )
 
@@ -55,10 +54,19 @@ func GetCounts() map[string]interface{} {
 	return grafanaData
 }
 
-// 工單工站狀態
-func GetTables() map[string]interface{} {
+func PrintParameter(i ...interface{}) {
+	fmt.Println(aurora.Yellow("query parameter---"))
+	fmt.Println(aurora.Yellow(i))
+}
+
+// 工單工站狀態 SfcStatsStation
+func GetTables(orderId, station string) map[string]interface{} {
+	PrintParameter(orderId, station)
 	trigger := func(i interface{}) ([]byte, error) {
 		url := apiUrl + "/grafana/tables?groupBy=station"
+		if orderId != "" {
+			url = url + "&workorderId=" + orderId
+		}
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
@@ -121,9 +129,13 @@ func GetTables() map[string]interface{} {
 }
 
 //報工單紀錄
-func GetWorkOrderList(station, orderId string) map[string]interface{} {
+func GetWorkOrderList(orderId, station string) map[string]interface{} {
+	PrintParameter(orderId, station)
 	trigger := func(i interface{}) ([]byte, error) {
 		url := apiUrl + "/workorders"
+		if orderId != "" {
+			url = url + "&workorderId=" + orderId
+		}
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
@@ -177,12 +189,16 @@ func GetWorkOrderList(station, orderId string) map[string]interface{} {
 
 //工單狀態
 func GetWorkOrderDetail(orderId, station string) map[string]interface{} {
+	PrintParameter(orderId, station)
 	trigger := func(i interface{}) ([]byte, error) {
-		// url := apiUrl + "/workorders?detail=true"
-		url := apiUrl + "/grafana/table/workorderDetail"
+		url := apiUrl + "/workorders?detail=true"
+		if station != "" {
+			url = url + "&station=" + station
+		}
+		// url := apiUrl + "/grafana/table/workorderDetail" 	//做到一半
+
 		//convert object to json
 		param := req.BodyJSON(&i)
-		//res就是打api成功拿到的response, 如果打失敗則拿到err
 		res, err := DoAPI("GET", url, param)
 		if err != nil {
 			return nil, err
@@ -191,15 +207,16 @@ func GetWorkOrderDetail(orderId, station string) map[string]interface{} {
 	}
 
 	res, _ := trigger(nil)
-	fmt.Println(string(res))
 
-	var m map[string]interface{}
-	err := json.Unmarshal(res, &m)
-	if err != nil {
-		log.Error(err)
-	}
+	//做到一半
+	// fmt.Println(string(res))
+	// var m map[string]interface{}
+	// err := json.Unmarshal(res, &m)
+	// if err != nil {
+	// 	log.Error(err)
+	// }
 
-	return m
+	// return m
 
 	var Results []map[string]interface{}
 	var Rows [][]interface{}
