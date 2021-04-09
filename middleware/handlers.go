@@ -87,11 +87,11 @@ func Query(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("orderId value:", scopedVarsJsonValue)
 			orderId = scopedVarsJsonValue
 		}
-		targetStation := requestBody.Get("station").GetIndex(indexOfTargets).Get("station").MustString()
+		targetStation := requestBody.Get("station").GetIndex(indexOfTargets).Get("stationId").MustString()
 		if targetStation != "" {
 			//get scopedVars OrderId
 			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
-			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "station.value").String()
+			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "machineId.value").String() //#注意stationId對應的是machineId
 			fmt.Println("station value:", scopedVarsJsonValue)
 			station = scopedVarsJsonValue
 		}
