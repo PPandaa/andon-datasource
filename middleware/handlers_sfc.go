@@ -54,6 +54,10 @@ func GetCounts() map[string]interface{} {
 	return grafanaData
 }
 
+func TestParameter(i ...interface{}) {
+	fmt.Println(aurora.Cyan("query parameter---"))
+	fmt.Println(aurora.Cyan(i))
+}
 func PrintParameter(i ...interface{}) {
 	fmt.Println(aurora.Yellow("query parameter---"))
 	fmt.Println(aurora.Yellow(i))
@@ -130,11 +134,12 @@ func GetTables(orderId, station string) map[string]interface{} {
 
 //報工單紀錄
 func GetWorkOrderList(orderId, station string) map[string]interface{} {
+	fmt.Println("-------------GetWorkOrderList-------------")
 	PrintParameter(orderId, station)
 	trigger := func(i interface{}) ([]byte, error) {
 		url := apiUrl + "/workorders"
 		if orderId != "" {
-			url = url + "&workorderId=" + orderId
+			url = url + "?workorderId=" + orderId
 		}
 		//convert object to json
 		param := req.BodyJSON(&i)
@@ -149,7 +154,7 @@ func GetWorkOrderList(orderId, station string) map[string]interface{} {
 	res, _ := trigger(nil)
 
 	var Results []map[string]interface{}
-	var Rows [][]interface{}
+	Rows := [][]interface{}{}
 
 	//method2
 	gj := gjson.GetBytes(res, "#.WorkOrderList")
@@ -183,6 +188,9 @@ func GetWorkOrderList(orderId, station string) map[string]interface{} {
 		"rows":    Rows,
 		"type":    "table",
 	}
+	b, _ := json.Marshal(grafanaData)
+	fmt.Println(string(b))
+	fmt.Println(Rows)
 
 	return grafanaData
 }

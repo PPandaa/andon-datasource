@@ -74,7 +74,7 @@ func Query(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Body: ", requestBody)
 	// fmt.Println(requestBody.Get("targets").MustArray())
 	for indexOfTargets := 0; indexOfTargets < len(requestBody.Get("targets").MustArray()); indexOfTargets++ {
-		target := requestBody.Get("targets").GetIndex(indexOfTargets).Get("target").MustString()
+		target := requestBody.Get("targets").GetIndex(indexOfTargets).Get("metrics").MustString()
 
 		//yoga
 		var station string
@@ -95,6 +95,9 @@ func Query(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("station value:", scopedVarsJsonValue)
 			station = scopedVarsJsonValue
 		}
+
+		TestParameter("station:", station)
+		TestParameter("orderId:", orderId)
 
 		dataType := requestBody.Get("targets").GetIndex(indexOfTargets).Get("type").MustString()
 		if dataType == "table" {
