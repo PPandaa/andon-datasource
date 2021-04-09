@@ -174,6 +174,11 @@ func GetWorkOrderList(orderId, station string) map[string]interface{} {
 		}
 	}
 
+	if len(Rows) == 0 {
+		row := []interface{}{}
+		Rows = append(Rows, row)
+	}
+
 	columns := []map[string]string{
 		{"text": "WorkOrderId", "type": "string"},
 		{"text": "Reporter", "type": "string"},
