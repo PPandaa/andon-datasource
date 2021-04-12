@@ -115,7 +115,7 @@ func Query(w http.ResponseWriter, r *http.Request) {
 			case SfcStatsStation:
 				grafnaResponseArray = append(grafnaResponseArray, GetTables(orderId, station)) //工單工站狀態
 			case SfcCounts:
-				grafnaResponseArray = append(grafnaResponseArray, GetCounts())
+				grafnaResponseArray = append(grafnaResponseArray, GetCounts(orderId, station))
 			}
 		}
 	}

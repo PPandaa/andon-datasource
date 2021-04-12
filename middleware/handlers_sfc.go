@@ -31,9 +31,12 @@ func Start() {
 	apiUrl = os.Getenv("API_URL")
 }
 
-func GetCounts() map[string]interface{} {
+func GetCounts(orderId, station string) map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
 		url := apiUrl + "/grafana/counts"
+		if station != "" {
+			url = url + "?station=" + station
+		}
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
