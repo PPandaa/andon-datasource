@@ -15,7 +15,7 @@ import (
 )
 
 func initGlobalVar() {
-	err := godotenv.Load(config.EnvName)
+	err := godotenv.Load(config.EnvPath)
 	if err != nil {
 		log.Fatalf("Error loading env file")
 	}

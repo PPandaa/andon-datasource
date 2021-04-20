@@ -16,3 +16,7 @@
 [2021-03-22 17:30:43] 1.0.2 => dev {change Query -> annotation {189 print}}
 [2021-03-22 17:32:46] 1.0.2 => demo
 [2021-03-23 15:27:13] 1.0.2 => dev {change machinesFlowCharting}
+[2021-04-20 14:08:23] 1.0.2 => dev {add Panel3AndPanel4,Panel8,Panel9,Panel10}
+[2021-04-20 16:03:07] 1.0.2 => dev {add Panel7}
+[2021-04-20 16:08:57] 1.0.2 => dev {change Panel7 -> add refID}
+[2021-04-20 17:23:28] 1.0.2 => dev {change Panel10 -> add more row}
