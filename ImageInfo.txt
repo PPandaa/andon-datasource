@@ -20,3 +20,6 @@
 [2021-04-20 16:03:07] 1.0.2 => dev {add Panel7}
 [2021-04-20 16:08:57] 1.0.2 => dev {change Panel7 -> add refID}
 [2021-04-20 17:23:28] 1.0.2 => dev {change Panel10 -> add more row}
+[2021-04-21 18:21:29] 1.0.2 => dev {change Panel3AndPanel4 -> use real data}
+[2021-04-21 19:30:42] 1.0.2 => dev {delete Panel7 change Panel3AndPanel4,Panel8,Panel9,Panel10 -> use real data}
+[2021-04-21 19:49:17] 1.0.2 => dev {change Panel10 -> column seq}

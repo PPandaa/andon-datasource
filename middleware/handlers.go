@@ -150,7 +150,7 @@ func Query(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("/query")
 	requestBody, _ := simplejson.NewFromReader(r.Body)
 	fmt.Println("Body: ", requestBody)
-	fmt.Println(requestBody.Get("targets").MustArray())
+	// fmt.Println("Targets: ", requestBody.Get("targets").MustArray())
 
 	for indexOfTargets := 0; indexOfTargets < len(requestBody.Get("targets").MustArray()); indexOfTargets++ {
 		refID := requestBody.Get("targets").GetIndex(indexOfTargets).Get("refId").MustString()
@@ -207,15 +207,13 @@ func Query(w http.ResponseWriter, r *http.Request) {
 				// grafnaResponseArrayElement = meanTimeComputeSinglestat(metrics, groupID, totalComputeValue, fromTime, toTime)
 				// grafnaResponseArray = append(grafnaResponseArray, grafnaResponseArrayElement)
 			case "Panel3AndPanel4":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel3AndPanel4())
-			case "Panel7":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel7(refID))
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel3AndPanel4(groupID))
 			case "Panel8":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel8())
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel8(groupID))
 			case "Panel9":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel9())
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel9(groupID))
 			case "Panel10":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel10())
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel10(groupID))
 			}
 
 		} else {

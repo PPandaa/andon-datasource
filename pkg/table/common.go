@@ -9,6 +9,42 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+func rankTable(groupID string, eventCode int) []interface{} {
+	eventLatestCollection := config.DB.C(config.EventLatest)
+	eventHistCollection := config.DB.C(config.EventHist)
+	machineRawDataCollection := config.DB.C(config.MachineRawData)
+
+	nowTime := time.Now().In(config.TaipeiTimeZone)
+	starttimeFS := fmt.Sprintf("%02d-%02d-%02dT00:00:00+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	starttimeT, _ := time.Parse(time.RFC3339, starttimeFS)
+	endtimeFS := fmt.Sprintf("%02d-%02d-%02dT23:59:59+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	endtimeT, _ := time.Parse(time.RFC3339, endtimeFS)
+
+	machineTotalTimes := map[string]int{}
+
+	var eventLatestCallRepairResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": eventCode}}, {"$group": bson.M{"_id": "$MachineID", "count": bson.M{"$sum": 1}}}}).All(&eventLatestCallRepairResults)
+	for _, eventLatestCallRepairResult := range eventLatestCallRepairResults {
+		machineTotalTimes[eventLatestCallRepairResult["_id"].(string)] += 1
+	}
+
+	var eventHistCallRepairResults []map[string]interface{}
+	eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": eventCode}}, {"$group": bson.M{"_id": "$MachineID", "count": bson.M{"$sum": 1}}}}).All(&eventHistCallRepairResults)
+	for _, eventHistCallRepairResult := range eventHistCallRepairResults {
+		machineTotalTimes[eventHistCallRepairResult["_id"].(string)] += 1
+	}
+
+	rows := []interface{}{}
+	for k, v := range machineTotalTimes {
+		var machineRawDataResult map[string]interface{}
+		machineRawDataCollection.Find(bson.M{"MachineID": k}).One(&machineRawDataResult)
+		row := []interface{}{machineRawDataResult["MachineName"], v}
+		rows = append(rows, row)
+	}
+
+	return rows
+}
+
 func MachinesSinglestat(groupID string) map[string]interface{} {
 	statisticCollection := config.DB.C(config.Statistic)
 	var result map[string]interface{}
@@ -369,18 +405,67 @@ func MeanTimeComputeV3(computeType string, groupID string, fromTime time.Time, t
 	return grafanaData
 }
 
-func Panel3AndPanel4() map[string]interface{} {
+func Panel3AndPanel4(groupID string) map[string]interface{} {
+	var cs_new, cs_ass, cs_ip, cs_od, cr_new, cr_ass, cr_ip, cr_od int
+	eventLatestCollection := config.DB.C(config.EventLatest)
+
+	nowTime := time.Now().In(config.TaipeiTimeZone)
+	starttimeFS := fmt.Sprintf("%02d-%02d-%02dT00:00:00+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	starttimeT, _ := time.Parse(time.RFC3339, starttimeFS)
+	endtimeFS := fmt.Sprintf("%02d-%02d-%02dT23:59:59+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	endtimeT, _ := time.Parse(time.RFC3339, endtimeFS)
+
+	var eventLatestCallRepairResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": 1}}, {"$group": bson.M{"_id": "$ProcessingStatusCode", "count": bson.M{"$sum": 1}}}}).All(&eventLatestCallRepairResults)
+	for _, eventLatestCallRepairResult := range eventLatestCallRepairResults {
+		switch eventLatestCallRepairResult["_id"].(int) {
+		case 0:
+			cr_new = eventLatestCallRepairResult["count"].(int)
+			break
+		case 1:
+			cr_ass = eventLatestCallRepairResult["count"].(int)
+			break
+		case 3:
+			cr_ip = eventLatestCallRepairResult["count"].(int)
+			break
+		case 4:
+			cr_od = eventLatestCallRepairResult["count"].(int)
+			break
+		}
+	}
+
+	var eventLatestCallSupervisorResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": 2}}, {"$group": bson.M{"_id": "$ProcessingStatusCode", "count": bson.M{"$sum": 1}}}}).All(&eventLatestCallSupervisorResults)
+	for _, eventLatestCallSupervisorResult := range eventLatestCallSupervisorResults {
+		switch eventLatestCallSupervisorResult["_id"].(int) {
+		case 0:
+			cs_new = eventLatestCallSupervisorResult["count"].(int)
+			break
+		case 1:
+			cs_ass = eventLatestCallSupervisorResult["count"].(int)
+			break
+		case 3:
+			cs_ip = eventLatestCallSupervisorResult["count"].(int)
+			break
+		case 4:
+			cs_od = eventLatestCallSupervisorResult["count"].(int)
+			break
+		}
+	}
+
 	columns := []map[string]string{
-		{"text": "cs-new", "type": "number"},
-		{"text": "cs-ip", "type": "number"},
-		{"text": "cr-new", "type": "number"},
-		{"text": "cr-ass", "type": "number"},
-		{"text": "cr-ip", "type": "number"},
-		{"text": "cr-od", "type": "number"},
+		{"text": "cr_new", "type": "number"},
+		{"text": "cr_ass", "type": "number"},
+		{"text": "cr_ip", "type": "number"},
+		{"text": "cr_od", "type": "number"},
+		{"text": "cs_new", "type": "number"},
+		{"text": "cs_ass", "type": "number"},
+		{"text": "cs_ip", "type": "number"},
+		{"text": "cs_od", "type": "number"},
 	}
 
 	rows := []interface{}{
-		[]int{3, 2, 1, 3, 2, 3},
+		[]int{cr_new, cr_ass, cr_ip, cr_od, cs_new, cs_ass, cs_ip, cs_od},
 	}
 
 	grafanaData := map[string]interface{}{
@@ -392,41 +477,21 @@ func Panel3AndPanel4() map[string]interface{} {
 	return grafanaData
 }
 
-func Panel7(refID string) map[string]interface{} {
-	columns := []map[string]string{
-		{"text": "發生時間", "type": "string"},
-		{"text": "負責人", "type": "string"},
-		{"text": "持續時間", "type": "string"},
-		{"text": "累積次數", "type": "number"},
-	}
+func Panel8(groupID string) map[string]interface{} {
+	rows := rankTable(groupID, 1)
 
-	rows := []interface{}{
-		[]interface{}{"2021/03/28 10:51:00", "張雯婷", "00:02:00", 3},
-	}
-
-	grafanaData := map[string]interface{}{
-		"refId":   refID,
-		"columns": columns,
-		"rows":    rows,
-		"type":    "table",
-	}
-	// fmt.Println(grafanaData)
-	return grafanaData
-}
-
-func Panel8() map[string]interface{} {
 	columns := []map[string]string{
 		{"text": "machineName", "type": "string"},
 		{"text": "times", "type": "number"},
 	}
 
-	rows := []interface{}{
-		[]interface{}{"Station-004", 15},
-		[]interface{}{"Station-001", 12},
-		[]interface{}{"Station-002", 8},
-		[]interface{}{"Station-003", 4},
-		[]interface{}{"Station-005", 3},
-	}
+	// rows := []interface{}{
+	// 	[]interface{}{"Station-004", 15},
+	// 	[]interface{}{"Station-001", 12},
+	// 	[]interface{}{"Station-002", 8},
+	// 	[]interface{}{"Station-003", 4},
+	// 	[]interface{}{"Station-005", 3},
+	// }
 
 	grafanaData := map[string]interface{}{
 		"columns": columns,
@@ -437,16 +502,18 @@ func Panel8() map[string]interface{} {
 	return grafanaData
 }
 
-func Panel9() map[string]interface{} {
+func Panel9(groupID string) map[string]interface{} {
+	rows := rankTable(groupID, 2)
+
 	columns := []map[string]string{
 		{"text": "tpcName", "type": "string"},
 		{"text": "times", "type": "number"},
 	}
 
-	rows := []interface{}{
-		[]interface{}{"TPC-001", 17},
-		[]interface{}{"TPC-002", 7},
-	}
+	// rows := []interface{}{
+	// 	[]interface{}{"TPC-001", 17},
+	// 	[]interface{}{"TPC-002", 7},
+	// }
 
 	grafanaData := map[string]interface{}{
 		"columns": columns,
@@ -457,31 +524,92 @@ func Panel9() map[string]interface{} {
 	return grafanaData
 }
 
-func Panel10() map[string]interface{} {
+func Panel10(groupID string) map[string]interface{} {
+	eventLatestcollection := config.DB.C(config.EventLatest)
+
+	var eventLatestResults []map[string]interface{}
+	eventLatestcollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}}).All(&eventLatestResults)
+
+	rows := []interface{}{}
+	for _, eventLatestResult := range eventLatestResults {
+		var row []interface{}
+		row = append(row, eventLatestResult["EventID"])
+		row = append(row, eventLatestResult["EventCode"])
+		row = append(row, eventLatestResult["Type"])
+		row = append(row, eventLatestResult["GroupID"])
+		row = append(row, eventLatestResult["GroupName"])
+		row = append(row, eventLatestResult["MachineID"])
+		row = append(row, eventLatestResult["MachineName"])
+		row = append(row, eventLatestResult["ProcessingStatusCode"])
+		row = append(row, eventLatestResult["ProcessingProgress"])
+		row = append(row, eventLatestResult["PrincipalID"])
+		row = append(row, eventLatestResult["PrincipalName"])
+		row = append(row, eventLatestResult["AbnormalLastingSecond"])
+		row = append(row, eventLatestResult["AbnormalStartTime"])
+		row = append(row, eventLatestResult["PlanRepairTime"])
+		row = append(row, eventLatestResult["ShouldRepairTime"])
+		row = append(row, eventLatestResult["RepairStartTime"])
+		row = append(row, eventLatestResult["CompleteTime"])
+		row = append(row, eventLatestResult["TPCID"])
+		row = append(row, eventLatestResult["TPCName"])
+		row = append(row, eventLatestResult["AbnormalReason"])
+		row = append(row, eventLatestResult["AbnormalSolution"])
+		row = append(row, eventLatestResult["AbnormalCode"])
+		row = append(row, eventLatestResult["AbnormalPosition"])
+		// fmt.Println(row)
+		rows = append(rows, row)
+	}
+
 	columns := []map[string]string{
-		{"text": "事件類別", "type": "string"},
-		{"text": "類型", "type": "string"},
-		{"text": "位置", "type": "string"},
-		{"text": "狀態", "type": "number"},
-		{"text": "負責人", "type": "string"},
-		{"text": "持續時間", "type": "number"},
-		{"text": "發生時間", "type": "time"},
-		{"text": "排修時間", "type": "time"},
-		{"text": "執行時間", "type": "time"},
-		{"text": "完成時間", "type": "time"},
+		{"text": "EventID", "type": "string"},
+		{"text": "EventCode", "type": "number"},
+		{"text": "Type", "type": "string"},
+		{"text": "GroupID", "type": "string"},
+		{"text": "GroupName", "type": "string"},
+		{"text": "MachineID", "type": "string"},
+		{"text": "MachineName", "type": "string"},
+		{"text": "ProcessingStatusCode", "type": "number"},
+		{"text": "ProcessingProgress", "type": "string"},
+		{"text": "PrincipalID", "type": "string"},
+		{"text": "PrincipalName", "type": "string"},
+		{"text": "AbnormalLastingSecond", "type": "number"},
+		{"text": "AbnormalStartTime", "type": "time"},
+		{"text": "PlanRepairTime", "type": "time"},
+		{"text": "ShouldRepairTime", "type": "time"},
+		{"text": "RepairStartTime", "type": "time"},
+		{"text": "CompleteTime", "type": "time"},
+		{"text": "TPCID", "type": "string"},
+		{"text": "TPCName", "type": "string"},
+		{"text": "AbnormalReason", "type": "string"},
+		{"text": "AbnormalSolution", "type": "string"},
+		{"text": "AbnormalCode", "type": "number"},
+		{"text": "AbnormalPosition", "type": "string"},
 	}
-	formatStartTime1, _ := time.Parse(time.RFC3339, "2021-03-19T18:00:00+08:00")
-	formatStartTime2, _ := time.Parse(time.RFC3339, "2021-03-26T12:00:00+08:00")
-	formatPlanTime1, _ := time.Parse(time.RFC3339, "2021-03-26T12:00:00+08:00")
-	formatRepairTime1, _ := time.Parse(time.RFC3339, "2021-03-26T12:00:00+08:00")
-	formatCompleteTime1, _ := time.Parse(time.RFC3339, "2021-03-26T12:00:00+08:00")
-	rows := []interface{}{
-		[]interface{}{"Call Repair", "Manual", "Station-004", 3, "黃伯依", 1200, formatStartTime1, formatPlanTime1, nil, nil},
-		[]interface{}{"Call Repair", "Auto", "Station-001", 4, "林宏冰", 259200, formatStartTime2, formatPlanTime1, formatRepairTime1, nil},
-		[]interface{}{"Call Repair", "Auto", "Station-002", 1, "郭育廷", 300, formatStartTime2, formatPlanTime1, formatRepairTime1, nil},
-		[]interface{}{"Call Repair", "Manual", "TPC-001", 0, "張雯婷", 120, formatStartTime2, nil, nil, nil},
-		[]interface{}{"Call Repair", "Manual", "TPC-002", 6, "陳雅惠", nil, formatStartTime2, nil, nil, formatCompleteTime1},
-	}
+
+	// columns := []map[string]string{
+	// 	{"text": "事件類別", "type": "string"},
+	// 	{"text": "類型", "type": "string"},
+	// 	{"text": "位置", "type": "string"},
+	// 	{"text": "狀態", "type": "number"},
+	// 	{"text": "負責人", "type": "string"},
+	// 	{"text": "持續時間", "type": "number"},
+	// 	{"text": "發生時間", "type": "time"},
+	// 	{"text": "排修時間", "type": "time"},
+	// 	{"text": "執行時間", "type": "time"},
+	// 	{"text": "完成時間", "type": "time"},
+	// }
+	// formatStartTime1, _ := time.Parse(time.RFC3339, "2021-03-19T18:00:00+08:00")
+	// formatStartTime2, _ := time.Parse(time.RFC3339, "2021-03-26T12:00:00+08:00")
+	// formatPlanTime1, _ := time.Parse(time.RFC3339, "2021-03-26T12:00:00+08:00")
+	// formatRepairTime1, _ := time.Parse(time.RFC3339, "2021-03-26T12:00:00+08:00")
+	// formatCompleteTime1, _ := time.Parse(time.RFC3339, "2021-03-26T12:00:00+08:00")
+	// rows := []interface{}{
+	// 	[]interface{}{"Call Repair", "Manual", "Station-004", 3, "黃伯依", 1200, formatStartTime1, formatPlanTime1, nil, nil},
+	// 	[]interface{}{"Call Repair", "Auto", "Station-001", 4, "林宏冰", 259200, formatStartTime2, formatPlanTime1, formatRepairTime1, nil},
+	// 	[]interface{}{"Call Repair", "Auto", "Station-002", 1, "郭育廷", 300, formatStartTime2, formatPlanTime1, formatRepairTime1, nil},
+	// 	[]interface{}{"Call Repair", "Manual", "TPC-001", 0, "張雯婷", 120, formatStartTime2, nil, nil, nil},
+	// 	[]interface{}{"Call Repair", "Manual", "TPC-002", 6, "陳雅惠", nil, formatStartTime2, nil, nil, formatCompleteTime1},
+	// }
 
 	grafanaData := map[string]interface{}{
 		"columns": columns,
