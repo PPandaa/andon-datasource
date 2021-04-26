@@ -9,42 +9,6 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func rankTable(groupID string, eventCode int) []interface{} {
-	eventLatestCollection := config.DB.C(config.EventLatest)
-	eventHistCollection := config.DB.C(config.EventHist)
-	machineRawDataCollection := config.DB.C(config.MachineRawData)
-
-	nowTime := time.Now().In(config.TaipeiTimeZone)
-	starttimeFS := fmt.Sprintf("%02d-%02d-%02dT00:00:00+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
-	starttimeT, _ := time.Parse(time.RFC3339, starttimeFS)
-	endtimeFS := fmt.Sprintf("%02d-%02d-%02dT23:59:59+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
-	endtimeT, _ := time.Parse(time.RFC3339, endtimeFS)
-
-	machineTotalTimes := map[string]int{}
-
-	var eventLatestCallRepairResults []map[string]interface{}
-	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": eventCode}}, {"$group": bson.M{"_id": "$MachineID", "count": bson.M{"$sum": 1}}}}).All(&eventLatestCallRepairResults)
-	for _, eventLatestCallRepairResult := range eventLatestCallRepairResults {
-		machineTotalTimes[eventLatestCallRepairResult["_id"].(string)] += 1
-	}
-
-	var eventHistCallRepairResults []map[string]interface{}
-	eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": eventCode}}, {"$group": bson.M{"_id": "$MachineID", "count": bson.M{"$sum": 1}}}}).All(&eventHistCallRepairResults)
-	for _, eventHistCallRepairResult := range eventHistCallRepairResults {
-		machineTotalTimes[eventHistCallRepairResult["_id"].(string)] += 1
-	}
-
-	rows := []interface{}{}
-	for k, v := range machineTotalTimes {
-		var machineRawDataResult map[string]interface{}
-		machineRawDataCollection.Find(bson.M{"MachineID": k}).One(&machineRawDataResult)
-		row := []interface{}{machineRawDataResult["MachineName"], v}
-		rows = append(rows, row)
-	}
-
-	return rows
-}
-
 func MachinesSinglestat(groupID string) map[string]interface{} {
 	statisticCollection := config.DB.C(config.Statistic)
 	var result map[string]interface{}
@@ -405,6 +369,126 @@ func MeanTimeComputeV3(computeType string, groupID string, fromTime time.Time, t
 	return grafanaData
 }
 
+func Panel1Singlestat(groupID string) map[string]interface{} {
+	eventLatestCollection := config.DB.C(config.EventLatest)
+
+	nowTime := time.Now().In(config.TaipeiTimeZone)
+	starttimeFS := fmt.Sprintf("%02d-%02d-%02dT00:00:00+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	starttimeT, _ := time.Parse(time.RFC3339, starttimeFS)
+	endtimeFS := fmt.Sprintf("%02d-%02d-%02dT23:59:59+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	endtimeT, _ := time.Parse(time.RFC3339, endtimeFS)
+
+	var eventLatestCallRepairResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": 2}}}).All(&eventLatestCallRepairResults)
+
+	columns := []map[string]string{
+		{"text": "cs_total", "type": "number"},
+	}
+
+	rows := []interface{}{
+		[]int{len(eventLatestCallRepairResults)},
+	}
+
+	grafanaData := map[string]interface{}{
+		"columns": columns,
+		"rows":    rows,
+		"type":    "table",
+	}
+	// fmt.Println(grafanaData)
+	return grafanaData
+}
+
+func Panel1Table(groupID string) map[string]interface{} {
+	eventLatestCollection := config.DB.C(config.EventLatest)
+
+	nowTime := time.Now().In(config.TaipeiTimeZone)
+	starttimeFS := fmt.Sprintf("%02d-%02d-%02dT00:00:00+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	starttimeT, _ := time.Parse(time.RFC3339, starttimeFS)
+	endtimeFS := fmt.Sprintf("%02d-%02d-%02dT23:59:59+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	endtimeT, _ := time.Parse(time.RFC3339, endtimeFS)
+
+	var eventLatestCallRepairResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": 2}}}).All(&eventLatestCallRepairResults)
+	rows := []interface{}{}
+	for _, eventLatestCallRepairResult := range eventLatestCallRepairResults {
+		row := []interface{}{eventLatestCallRepairResult["TPCName"], eventLatestCallRepairResult["AbnormalLastingSecond"]}
+		rows = append(rows, row)
+	}
+
+	columns := []map[string]string{
+		{"text": "tpcName", "type": "string"},
+		{"text": "abnormalLastingSecond", "type": "number"},
+	}
+
+	grafanaData := map[string]interface{}{
+		"columns": columns,
+		"rows":    rows,
+		"type":    "table",
+	}
+	// fmt.Println(grafanaData)
+	return grafanaData
+}
+
+func Panel2Singlestat(groupID string) map[string]interface{} {
+	eventLatestCollection := config.DB.C(config.EventLatest)
+
+	nowTime := time.Now().In(config.TaipeiTimeZone)
+	starttimeFS := fmt.Sprintf("%02d-%02d-%02dT00:00:00+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	starttimeT, _ := time.Parse(time.RFC3339, starttimeFS)
+	endtimeFS := fmt.Sprintf("%02d-%02d-%02dT23:59:59+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	endtimeT, _ := time.Parse(time.RFC3339, endtimeFS)
+
+	var eventLatestCallRepairResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": 1}}}).All(&eventLatestCallRepairResults)
+
+	columns := []map[string]string{
+		{"text": "cr_total", "type": "number"},
+	}
+
+	rows := []interface{}{
+		[]int{len(eventLatestCallRepairResults)},
+	}
+
+	grafanaData := map[string]interface{}{
+		"columns": columns,
+		"rows":    rows,
+		"type":    "table",
+	}
+	// fmt.Println(grafanaData)
+	return grafanaData
+}
+
+func Panel2Table(groupID string) map[string]interface{} {
+	eventLatestCollection := config.DB.C(config.EventLatest)
+
+	nowTime := time.Now().In(config.TaipeiTimeZone)
+	starttimeFS := fmt.Sprintf("%02d-%02d-%02dT00:00:00+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	starttimeT, _ := time.Parse(time.RFC3339, starttimeFS)
+	endtimeFS := fmt.Sprintf("%02d-%02d-%02dT23:59:59+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	endtimeT, _ := time.Parse(time.RFC3339, endtimeFS)
+
+	var eventLatestCallRepairResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": 1}}}).All(&eventLatestCallRepairResults)
+	rows := []interface{}{}
+	for _, eventLatestCallRepairResult := range eventLatestCallRepairResults {
+		row := []interface{}{eventLatestCallRepairResult["MachineName"], eventLatestCallRepairResult["AbnormalLastingSecond"]}
+		rows = append(rows, row)
+	}
+
+	columns := []map[string]string{
+		{"text": "machineName", "type": "string"},
+		{"text": "abnormalLastingSecond", "type": "number"},
+	}
+
+	grafanaData := map[string]interface{}{
+		"columns": columns,
+		"rows":    rows,
+		"type":    "table",
+	}
+	// fmt.Println(grafanaData)
+	return grafanaData
+}
+
 func Panel3AndPanel4(groupID string) map[string]interface{} {
 	var cs_new, cs_ass, cs_ip, cs_od, cr_new, cr_ass, cr_ip, cr_od int
 	eventLatestCollection := config.DB.C(config.EventLatest)
@@ -478,7 +562,37 @@ func Panel3AndPanel4(groupID string) map[string]interface{} {
 }
 
 func Panel8(groupID string) map[string]interface{} {
-	rows := rankTable(groupID, 1)
+	eventLatestCollection := config.DB.C(config.EventLatest)
+	eventHistCollection := config.DB.C(config.EventHist)
+	machineRawDataCollection := config.DB.C(config.MachineRawData)
+
+	nowTime := time.Now().In(config.TaipeiTimeZone)
+	starttimeFS := fmt.Sprintf("%02d-%02d-%02dT00:00:00+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	starttimeT, _ := time.Parse(time.RFC3339, starttimeFS)
+	endtimeFS := fmt.Sprintf("%02d-%02d-%02dT23:59:59+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	endtimeT, _ := time.Parse(time.RFC3339, endtimeFS)
+
+	machineTotalTimes := map[string]int{}
+
+	var eventLatestCallRepairResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": 1}}, {"$group": bson.M{"_id": "$MachineID", "count": bson.M{"$sum": 1}}}}).All(&eventLatestCallRepairResults)
+	for _, eventLatestCallRepairResult := range eventLatestCallRepairResults {
+		machineTotalTimes[eventLatestCallRepairResult["_id"].(string)] += 1
+	}
+
+	var eventHistCallRepairResults []map[string]interface{}
+	eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": 1}}, {"$group": bson.M{"_id": "$MachineID", "count": bson.M{"$sum": 1}}}}).All(&eventHistCallRepairResults)
+	for _, eventHistCallRepairResult := range eventHistCallRepairResults {
+		machineTotalTimes[eventHistCallRepairResult["_id"].(string)] += 1
+	}
+
+	rows := []interface{}{}
+	for k, v := range machineTotalTimes {
+		var machineRawDataResult map[string]interface{}
+		machineRawDataCollection.Find(bson.M{"MachineID": k}).One(&machineRawDataResult)
+		row := []interface{}{machineRawDataResult["MachineName"], v}
+		rows = append(rows, row)
+	}
 
 	columns := []map[string]string{
 		{"text": "machineName", "type": "string"},
@@ -503,7 +617,37 @@ func Panel8(groupID string) map[string]interface{} {
 }
 
 func Panel9(groupID string) map[string]interface{} {
-	rows := rankTable(groupID, 2)
+	eventLatestCollection := config.DB.C(config.EventLatest)
+	eventHistCollection := config.DB.C(config.EventHist)
+	tpcListCollection := config.DB.C(config.TPCList)
+
+	nowTime := time.Now().In(config.TaipeiTimeZone)
+	starttimeFS := fmt.Sprintf("%02d-%02d-%02dT00:00:00+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	starttimeT, _ := time.Parse(time.RFC3339, starttimeFS)
+	endtimeFS := fmt.Sprintf("%02d-%02d-%02dT23:59:59+08:00", nowTime.Year(), nowTime.Month(), nowTime.Day())
+	endtimeT, _ := time.Parse(time.RFC3339, endtimeFS)
+
+	tpcTotalTimes := map[string]int{}
+
+	var eventLatestCallRepairResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": 2}}, {"$group": bson.M{"_id": "$TPCID", "count": bson.M{"$sum": 1}}}}).All(&eventLatestCallRepairResults)
+	for _, eventLatestCallRepairResult := range eventLatestCallRepairResults {
+		tpcTotalTimes[eventLatestCallRepairResult["_id"].(string)] += 1
+	}
+
+	var eventHistCallRepairResults []map[string]interface{}
+	eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$match": bson.M{"EventCode": 2}}, {"$group": bson.M{"_id": "$TPCID", "count": bson.M{"$sum": 1}}}}).All(&eventHistCallRepairResults)
+	for _, eventHistCallRepairResult := range eventHistCallRepairResults {
+		tpcTotalTimes[eventHistCallRepairResult["_id"].(string)] += 1
+	}
+
+	rows := []interface{}{}
+	for k, v := range tpcTotalTimes {
+		var tpcTotalTimesResult map[string]interface{}
+		tpcListCollection.Find(bson.M{"TPCID": k}).One(&tpcTotalTimesResult)
+		row := []interface{}{tpcTotalTimesResult["TPCName"], v}
+		rows = append(rows, row)
+	}
 
 	columns := []map[string]string{
 		{"text": "tpcName", "type": "string"},
@@ -540,6 +684,8 @@ func Panel10(groupID string) map[string]interface{} {
 		row = append(row, eventLatestResult["GroupName"])
 		row = append(row, eventLatestResult["MachineID"])
 		row = append(row, eventLatestResult["MachineName"])
+		row = append(row, eventLatestResult["TPCID"])
+		row = append(row, eventLatestResult["TPCName"])
 		row = append(row, eventLatestResult["ProcessingStatusCode"])
 		row = append(row, eventLatestResult["ProcessingProgress"])
 		row = append(row, eventLatestResult["PrincipalID"])
@@ -550,8 +696,6 @@ func Panel10(groupID string) map[string]interface{} {
 		row = append(row, eventLatestResult["ShouldRepairTime"])
 		row = append(row, eventLatestResult["RepairStartTime"])
 		row = append(row, eventLatestResult["CompleteTime"])
-		row = append(row, eventLatestResult["TPCID"])
-		row = append(row, eventLatestResult["TPCName"])
 		row = append(row, eventLatestResult["AbnormalReason"])
 		row = append(row, eventLatestResult["AbnormalSolution"])
 		row = append(row, eventLatestResult["AbnormalCode"])
@@ -568,6 +712,8 @@ func Panel10(groupID string) map[string]interface{} {
 		{"text": "GroupName", "type": "string"},
 		{"text": "MachineID", "type": "string"},
 		{"text": "MachineName", "type": "string"},
+		{"text": "TPCID", "type": "string"},
+		{"text": "TPCName", "type": "string"},
 		{"text": "ProcessingStatusCode", "type": "number"},
 		{"text": "ProcessingProgress", "type": "string"},
 		{"text": "PrincipalID", "type": "string"},
@@ -578,8 +724,6 @@ func Panel10(groupID string) map[string]interface{} {
 		{"text": "ShouldRepairTime", "type": "time"},
 		{"text": "RepairStartTime", "type": "time"},
 		{"text": "CompleteTime", "type": "time"},
-		{"text": "TPCID", "type": "string"},
-		{"text": "TPCName", "type": "string"},
 		{"text": "AbnormalReason", "type": "string"},
 		{"text": "AbnormalSolution", "type": "string"},
 		{"text": "AbnormalCode", "type": "number"},

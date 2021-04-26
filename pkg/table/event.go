@@ -284,18 +284,75 @@ func EventSinglestat(groupID string, machineID string) map[string]interface{} {
 	return grafanaData
 }
 
-func EventHist(groupID string, machineID string) map[string]interface{} {
-	eventHistCollection := config.DB.C(config.EventHist)
+func EventHist(groupID string, machineID string, startTime time.Time, endTime time.Time) map[string]interface{} {
 	rows := []interface{}{}
-	var results []map[string]interface{}
+	eventLatestcollection := config.DB.C(config.EventLatest)
+	var eventLatestResults []map[string]interface{}
 	if machineID == "" {
-		eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"EventCode": 1}}}).All(&results)
+		eventLatestcollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": startTime, "$lt": endTime}}}}).All(&eventLatestResults)
 	} else {
-		eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"MachineID": machineID}}, {"$match": bson.M{"EventCode": 1}}}).All(&results)
+		eventLatestcollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"MachineID": machineID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": startTime, "$lt": endTime}}}}).All(&eventLatestResults)
 	}
-	for indexOfResult := 0; indexOfResult < len(results); indexOfResult++ {
+	for indexOfResult := 0; indexOfResult < len(eventLatestResults); indexOfResult++ {
 		var result map[string]interface{}
-		result = results[indexOfResult]
+		result = eventLatestResults[indexOfResult]
+		// fmt.Println("Result: ", result)
+		var row []interface{}
+		row = append(row, result["EventID"])
+		row = append(row, result["EventCode"])
+		row = append(row, result["Type"])
+		row = append(row, result["GroupID"])
+		row = append(row, result["GroupName"])
+		row = append(row, result["MachineID"])
+		row = append(row, result["MachineName"])
+		row = append(row, result["ProcessingStatusCode"])
+		row = append(row, result["ProcessingProgress"])
+		row = append(row, result["AbnormalStartTime"])
+		if result["ProcessingStatusCode"].(int) >= 3 {
+			if result["RepairStartTime"] != nil {
+				row = append(row, result["RepairStartTime"].(time.Time).Sub(result["AbnormalStartTime"].(time.Time)).Seconds())
+				row = append(row, result["RepairStartTime"])
+			} else {
+				row = append(row, result["AbnormalStartTime"].(time.Time).Sub(result["AbnormalStartTime"].(time.Time)).Seconds())
+				row = append(row, result["AbnormalStartTime"])
+			}
+			if result["ProcessingStatusCode"].(int) == 5 {
+				row = append(row, result["CompleteTime"].(time.Time).Sub(result["RepairStartTime"].(time.Time)).Seconds())
+				row = append(row, result["CompleteTime"])
+			} else {
+				row = append(row, nil)
+				row = append(row, nil)
+			}
+		} else {
+			row = append(row, nil)
+			row = append(row, nil)
+			row = append(row, nil)
+			row = append(row, nil)
+		}
+		row = append(row, result["AbnormalLastingSecond"])
+		row = append(row, result["ShouldRepairTime"])
+		row = append(row, result["PlanRepairTime"])
+		row = append(row, result["PrincipalID"])
+		row = append(row, result["PrincipalName"])
+		row = append(row, result["AbnormalReason"])
+		row = append(row, result["AbnormalSolution"])
+		row = append(row, result["AbnormalCode"])
+		row = append(row, result["AbnormalPosition"])
+		// fmt.Println(row)
+		rows = append(rows, row)
+	}
+
+	eventHistCollection := config.DB.C(config.EventHist)
+
+	var eventHistResults []map[string]interface{}
+	if machineID == "" {
+		eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": startTime, "$lt": endTime}}}}).All(&eventHistResults)
+	} else {
+		eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"MachineID": machineID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": startTime, "$lt": endTime}}}}).All(&eventHistResults)
+	}
+	for indexOfResult := 0; indexOfResult < len(eventHistResults); indexOfResult++ {
+		var result map[string]interface{}
+		result = eventHistResults[indexOfResult]
 		// fmt.Println("Result: ", result)
 		var row []interface{}
 		row = append(row, result["EventID"])

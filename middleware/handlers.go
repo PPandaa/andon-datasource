@@ -137,7 +137,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Println("Body: ", string(requestBody))
 
-	metrics := []string{"EventLatest", "EventHist", "EventList", "LastMonthAbReasonRank", "MTTD", "MTTR", "MTBF", "FlowCharting-Machines", "FlowCharting-TPC", "Singlestat-Machines", "Singlestat-Event", "Singlestat-MeanTimeCompute", "Panel3AndPanel4", "Panel7", "Panel8", "Panel9", "Panel10"}
+	metrics := []string{"EventLatest", "EventHist", "EventList", "LastMonthAbReasonRank", "MTTD", "MTTR", "MTBF", "FlowCharting-Machines", "FlowCharting-TPC", "Singlestat-Machines", "Singlestat-Event", "Singlestat-MeanTimeCompute", "Panel1Singlestat", "Panel1Table", "Panel2Singlestat", "Panel2Table", "Panel3AndPanel4", "Panel7", "Panel8", "Panel9", "Panel10"}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(metrics)
@@ -186,7 +186,7 @@ func Query(w http.ResponseWriter, r *http.Request) {
 			case "EventLatest":
 				grafnaResponseArray = append(grafnaResponseArray, table.EventLatest(groupID, machineID))
 			case "EventHist":
-				grafnaResponseArray = append(grafnaResponseArray, table.EventHist(groupID, machineID))
+				grafnaResponseArray = append(grafnaResponseArray, table.EventHist(groupID, machineID, fromTime, toTime))
 			case "EventList":
 				grafnaResponseArray = append(grafnaResponseArray, table.EventList(groupID, fromTime, toTime))
 			case "Singlestat-Event":
@@ -206,6 +206,14 @@ func Query(w http.ResponseWriter, r *http.Request) {
 				// grafnaResponseArray = append(grafnaResponseArray, grafnaResponseArrayElement)
 				// grafnaResponseArrayElement = meanTimeComputeSinglestat(metrics, groupID, totalComputeValue, fromTime, toTime)
 				// grafnaResponseArray = append(grafnaResponseArray, grafnaResponseArrayElement)
+			case "Panel1Singlestat":
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel1Singlestat(groupID))
+			case "Panel1Table":
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel1Table(groupID))
+			case "Panel2Singlestat":
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel2Singlestat(groupID))
+			case "Panel2Table":
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel2Table(groupID))
 			case "Panel3AndPanel4":
 				grafnaResponseArray = append(grafnaResponseArray, table.Panel3AndPanel4(groupID))
 			case "Panel8":

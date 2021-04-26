@@ -8,6 +8,7 @@ import (
 
 const (
 	EnvPath = "local.env"
+	// EnvPath = "C:/Users/SSI/Desktop/III/iFactory_Andon/Env/ifps-dev.env"
 
 	MachineRawData     = "iii.dae.MachineRawData"
 	MachineRawDataHist = "iii.dae.MachineRawDataHist"
