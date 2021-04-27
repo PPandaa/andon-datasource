@@ -137,7 +137,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Println("Body: ", string(requestBody))
 
-	metrics := []string{"EventLatest", "EventHist", "EventList", "LastMonthAbReasonRank", "MTTD", "MTTR", "MTBF", "FlowCharting-Machines", "FlowCharting-TPC", "Singlestat-Machines", "Singlestat-Event", "Singlestat-MeanTimeCompute", "Panel1Singlestat", "Panel1Table", "Panel2Singlestat", "Panel2Table", "Panel3AndPanel4", "Panel7", "Panel8", "Panel9", "Panel10"}
+	metrics := []string{"EventLatest", "EventHist", "EventList", "LastMonthAbReasonRank", "MTTD", "MTTR", "MTBF", "FlowCharting-Machines", "FlowCharting-TPC", "Singlestat-Machines", "Singlestat-Event", "Singlestat-MeanTimeCompute", "Panel1Singlestat", "Panel1Table", "Panel2Singlestat", "Panel2Table", "Panel3AndPanel4", "Panel5Singlestat", "Panel5Table", "Panel6Singlestat", "Panel6Table", "Panel7", "Panel8", "Panel9", "Panel10"}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(metrics)
@@ -216,6 +216,14 @@ func Query(w http.ResponseWriter, r *http.Request) {
 				grafnaResponseArray = append(grafnaResponseArray, table.Panel2Table(groupID))
 			case "Panel3AndPanel4":
 				grafnaResponseArray = append(grafnaResponseArray, table.Panel3AndPanel4(groupID))
+			case "Panel5Singlestat":
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel5Singlestat(groupID))
+			case "Panel5Table":
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel5Table(groupID))
+			case "Panel6Singlestat":
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel6Singlestat(groupID))
+			case "Panel6Table":
+				grafnaResponseArray = append(grafnaResponseArray, table.Panel6Table(groupID))
 			case "Panel8":
 				grafnaResponseArray = append(grafnaResponseArray, table.Panel8(groupID))
 			case "Panel9":

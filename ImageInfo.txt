@@ -28,3 +28,8 @@
 [2021-04-22 11:44:37] 1.0.2 => dev {change EventHist -> add latest}
 [2021-04-26 18:05:49] 1.0.2 => dev {add Panel1,Panel2}
 [2021-04-26 18:17:15] 1.0.2 => dev {change Panel1,Panel2 -> add refId}[2021-04-26 18:24:52] 1.0.2 => dev {change Query,Panel1,Panel2 -> remove refId}
+[2021-04-27 12:11:35] 1.0.2 => dev {add Panel5,Panel6}
+[2021-04-27 12:28:37] 1.0.2 => dev {change Panel5,Panel6}
+[2021-04-27 14:07:19] 1.0.2 => dev {add Panel5Singlestat,Panel6Singlestat}
+[2021-04-27 14:12:43] 1.0.2 => dev {change Panel5Singlestat}
+[2021-04-27 14:20:00] 1.0.2 => dev {change Panel5Singlestat}

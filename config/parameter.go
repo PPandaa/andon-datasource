@@ -8,6 +8,7 @@ import (
 
 const (
 	EnvPath = "local.env"
+	// EnvPath = "C:/Users/SSI/Desktop/III/iFactory_Andon/Env/ifps-dev.env"
 
 	MachineRawData     = "iii.dae.MachineRawData"
 	MachineRawDataHist = "iii.dae.MachineRawDataHist"
@@ -19,6 +20,7 @@ const (
 	EventHist          = "iii.dae.EventHist"
 	GroupTopo          = "iii.cfg.GroupTopology"
 	TPCList            = "iii.cfg.TPCList"
+	UserList           = "iii.cfg.UserList"
 )
 
 var (
