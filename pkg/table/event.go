@@ -284,7 +284,7 @@ func EventSinglestat(groupID string, machineID string) map[string]interface{} {
 	return grafanaData
 }
 
-func EventHist(groupID string, machineID string, startTime time.Time, endTime time.Time) map[string]interface{} {
+func EventHistTable(groupID string, machineID string, startTime time.Time, endTime time.Time) map[string]interface{} {
 	rows := []interface{}{}
 	eventLatestcollection := config.DB.C(config.EventLatest)
 	var eventLatestResults []map[string]interface{}
@@ -426,5 +426,40 @@ func EventHist(groupID string, machineID string, startTime time.Time, endTime ti
 		"rows":    rows,
 		"type":    "table",
 	}
+	return grafanaData
+}
+
+func EventHistSinglestat(groupID string, machineID string, startTime time.Time, endTime time.Time) map[string]interface{} {
+
+	eventLatestcollection := config.DB.C(config.EventLatest)
+	var eventLatestResults []map[string]interface{}
+	if machineID == "" {
+		eventLatestcollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": startTime, "$lt": endTime}}}}).All(&eventLatestResults)
+	} else {
+		eventLatestcollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"MachineID": machineID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": startTime, "$lt": endTime}}}}).All(&eventLatestResults)
+	}
+
+	eventHistCollection := config.DB.C(config.EventHist)
+	var eventHistResults []map[string]interface{}
+	if machineID == "" {
+		eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": startTime, "$lt": endTime}}}}).All(&eventHistResults)
+	} else {
+		eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"MachineID": machineID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": startTime, "$lt": endTime}}}}).All(&eventHistResults)
+	}
+
+	columns := []map[string]string{
+		{"text": "histEventCount", "type": "number"},
+	}
+
+	rows := []interface{}{
+		[]int{len(eventLatestResults) + len(eventHistResults)},
+	}
+
+	grafanaData := map[string]interface{}{
+		"columns": columns,
+		"rows":    rows,
+		"type":    "table",
+	}
+	// fmt.Println(grafanaData)
 	return grafanaData
 }

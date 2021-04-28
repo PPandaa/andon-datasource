@@ -33,3 +33,4 @@
 [2021-04-27 14:07:19] 1.0.2 => dev {add Panel5Singlestat,Panel6Singlestat}
 [2021-04-27 14:12:43] 1.0.2 => dev {change Panel5Singlestat}
 [2021-04-27 14:20:00] 1.0.2 => dev {change Panel5Singlestat}
+[2021-04-27 18:29:09] 1.0.2 => dev {add EventHistTable}
