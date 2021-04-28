@@ -7,8 +7,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/bitly/go-simplejson"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
 	"gopkg.in/mgo.v2"
@@ -20,10 +22,21 @@ func initGlobalVar() {
 		log.Fatalf("Error loading env file")
 	}
 
-	config.MongodbURL = os.Getenv("MONGODB_URL")
-	config.MongodbDatabase = os.Getenv("MONGODB_DATABASE")
-	config.MongodbUsername = os.Getenv("MONGODB_USERNAME")
-	config.MongodbPassword = os.Getenv("MONGODB_PASSWORD")
+	ensaasService := os.Getenv("ENSAAS_SERVICES")
+	if len(ensaasService) != 0 {
+		tempReader := strings.NewReader(ensaasService)
+		m, _ := simplejson.NewFromReader(tempReader)
+		mongodb := m.Get("mongodb").GetIndex(0).Get("credentials").MustMap()
+		config.MongodbURL = mongodb["externalHosts"].(string)
+		config.MongodbDatabase = mongodb["database"].(string)
+		config.MongodbUsername = mongodb["username"].(string)
+		config.MongodbPassword = mongodb["password"].(string)
+	} else {
+		config.MongodbURL = os.Getenv("MONGODB_URL")
+		config.MongodbDatabase = os.Getenv("MONGODB_DATABASE")
+		config.MongodbUsername = os.Getenv("MONGODB_USERNAME")
+		config.MongodbPassword = os.Getenv("MONGODB_PASSWORD")
+	}
 
 	newSession, err := mgo.Dial(config.MongodbURL)
 	if err != nil {
