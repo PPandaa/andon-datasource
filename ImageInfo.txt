@@ -38,3 +38,4 @@
 [2021-04-28 14:46:45] 1.0.2 => dev {change Panel8,Panel9}
 [2021-04-28 14:47:50] 1.0.2 => demo
 [2021-04-28 17:18:59] 1.0.3 => dev {add -> use ENSAAS_SERVICE}
+[2021-05-06 11:00:55] 1.0.4 => dev {change EventLatest,EventHistTable -> add EventName}

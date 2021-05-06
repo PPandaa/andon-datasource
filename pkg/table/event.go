@@ -28,6 +28,7 @@ func EventLatest(groupID string, machineID string) map[string]interface{} {
 		var row []interface{}
 		row = append(row, eventLatestResult["EventID"])
 		row = append(row, eventLatestResult["EventCode"])
+		row = append(row, eventLatestResult["EventName"])
 		row = append(row, eventLatestResult["Type"])
 		row = append(row, eventLatestResult["GroupID"])
 		row = append(row, eventLatestResult["GroupName"])
@@ -55,6 +56,7 @@ func EventLatest(groupID string, machineID string) map[string]interface{} {
 	columns := []map[string]string{
 		{"text": "EventID", "type": "string"},
 		{"text": "EventCode", "type": "number"},
+		{"text": "EventName", "type": "string"},
 		{"text": "Type", "type": "string"},
 		{"text": "GroupID", "type": "string"},
 		{"text": "GroupName", "type": "string"},
@@ -300,6 +302,7 @@ func EventHistTable(groupID string, machineID string, startTime time.Time, endTi
 		var row []interface{}
 		row = append(row, result["EventID"])
 		row = append(row, result["EventCode"])
+		row = append(row, result["EventName"])
 		row = append(row, result["Type"])
 		row = append(row, result["GroupID"])
 		row = append(row, result["GroupName"])
@@ -398,6 +401,7 @@ func EventHistTable(groupID string, machineID string, startTime time.Time, endTi
 	columns := []map[string]string{
 		{"text": "EventID", "type": "string"},
 		{"text": "EventCode", "type": "number"},
+		{"text": "EventName", "type": "string"},
 		{"text": "Type", "type": "string"},
 		{"text": "GroupID", "type": "string"},
 		{"text": "GroupName", "type": "string"},
