@@ -20,6 +20,7 @@ const (
 	GroupTopo          = "iii.cfg.GroupTopology"
 	TPCList            = "iii.cfg.TPCList"
 	UserList           = "iii.cfg.UserList"
+	EventConfig        = "iii.cfg.EventConfig"
 )
 
 var (

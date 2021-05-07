@@ -39,3 +39,8 @@
 [2021-04-28 14:47:50] 1.0.2 => demo
 [2021-04-28 17:18:59] 1.0.3 => dev {add -> use ENSAAS_SERVICE}
 [2021-05-06 11:00:55] 1.0.4 => dev {change EventLatest,EventHistTable -> add EventName}
+[2021-05-07 14:21:28] 1.0.5 => dev {change Panel1Singlestat... delete Panel2Singlestat,Panel2Table}
+[2021-05-07 14:31:50] 1.0.5 => dev {change Panel9}
+[2021-05-07 14:52:43] 1.0.5 => dev {change Panel10}
+[2021-05-07 15:49:02] 1.0.5 => dev {change EventHistTable}
+[2021-05-07 16:10:36] 1.0.5 => demo

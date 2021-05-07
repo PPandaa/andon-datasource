@@ -298,7 +298,7 @@ func EventHistTable(groupID string, machineID string, startTime time.Time, endTi
 	for indexOfResult := 0; indexOfResult < len(eventLatestResults); indexOfResult++ {
 		var result map[string]interface{}
 		result = eventLatestResults[indexOfResult]
-		// fmt.Println("Result: ", result)
+		// fmt.Println("LatestResult: ", result)
 		var row []interface{}
 		row = append(row, result["EventID"])
 		row = append(row, result["EventCode"])
@@ -341,7 +341,7 @@ func EventHistTable(groupID string, machineID string, startTime time.Time, endTi
 		row = append(row, result["AbnormalSolution"])
 		row = append(row, result["AbnormalCode"])
 		row = append(row, result["AbnormalPosition"])
-		// fmt.Println(row)
+		// fmt.Println("LatestRow: ", row)
 		rows = append(rows, row)
 	}
 
@@ -356,10 +356,11 @@ func EventHistTable(groupID string, machineID string, startTime time.Time, endTi
 	for indexOfResult := 0; indexOfResult < len(eventHistResults); indexOfResult++ {
 		var result map[string]interface{}
 		result = eventHistResults[indexOfResult]
-		// fmt.Println("Result: ", result)
+		// fmt.Println("HistResult: ", result)
 		var row []interface{}
 		row = append(row, result["EventID"])
 		row = append(row, result["EventCode"])
+		row = append(row, result["EventName"])
 		row = append(row, result["Type"])
 		row = append(row, result["GroupID"])
 		row = append(row, result["GroupName"])
@@ -372,11 +373,12 @@ func EventHistTable(groupID string, machineID string, startTime time.Time, endTi
 			if result["RepairStartTime"] != nil {
 				row = append(row, result["RepairStartTime"].(time.Time).Sub(result["AbnormalStartTime"].(time.Time)).Seconds())
 				row = append(row, result["RepairStartTime"])
+				row = append(row, result["CompleteTime"].(time.Time).Sub(result["RepairStartTime"].(time.Time)).Seconds())
 			} else {
 				row = append(row, result["AbnormalStartTime"].(time.Time).Sub(result["AbnormalStartTime"].(time.Time)).Seconds())
 				row = append(row, result["AbnormalStartTime"])
+				row = append(row, result["CompleteTime"].(time.Time).Sub(result["AbnormalStartTime"].(time.Time)).Seconds())
 			}
-			row = append(row, result["CompleteTime"].(time.Time).Sub(result["RepairStartTime"].(time.Time)).Seconds())
 			row = append(row, result["CompleteTime"])
 		} else {
 			row = append(row, nil)
@@ -393,10 +395,11 @@ func EventHistTable(groupID string, machineID string, startTime time.Time, endTi
 		row = append(row, result["AbnormalSolution"])
 		row = append(row, result["AbnormalCode"])
 		row = append(row, result["AbnormalPosition"])
-		// fmt.Println(row)
+		// fmt.Println("HistRow: ", row)
 		rows = append(rows, row)
 	}
-	// fmt.Println(rows)
+
+	// fmt.Println("Rows: ", rows)
 
 	columns := []map[string]string{
 		{"text": "EventID", "type": "string"},
@@ -430,6 +433,7 @@ func EventHistTable(groupID string, machineID string, startTime time.Time, endTi
 		"rows":    rows,
 		"type":    "table",
 	}
+	// fmt.Println(grafanaData)
 	return grafanaData
 }
 
