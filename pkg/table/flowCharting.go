@@ -51,10 +51,16 @@ func TpcFlowCharting(groupID string, refID string) map[string]interface{} {
 	var tpcListResults []map[string]interface{}
 	tpcListCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}}).All(&tpcListResults)
 	for _, tpcListResult := range tpcListResults {
+		var eventCount int
 		var eventLatestResults []map[string]interface{}
-		eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"TPCID": tpcListResult["TPCID"]}}, {"$match": bson.M{"EventCode": 2}}}).All(&eventLatestResults)
+		eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"TPCID": tpcListResult["TPCID"]}}}).All(&eventLatestResults)
+		for _, eventLatestResult := range eventLatestResults {
+			if eventLatestResult["MachineID"] == nil {
+				eventCount++
+			}
+		}
 		columns = append(columns, map[string]string{"text": tpcListResult["TPCName"].(string), "type": "string"})
-		row = append(row, len(eventLatestResults))
+		row = append(row, eventCount)
 		// fmt.Println(row)
 	}
 	if len(tpcListResults) != 0 {

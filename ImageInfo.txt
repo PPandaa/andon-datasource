@@ -44,3 +44,5 @@
 [2021-05-07 14:52:43] 1.0.5 => dev {change Panel10}
 [2021-05-07 15:49:02] 1.0.5 => dev {change EventHistTable}
 [2021-05-07 16:10:36] 1.0.5 => demo
+[2021-05-10 16:45:20] 1.0.6 => dev {same as 1.0.5}
+[2021-05-11 10:49:17] 1.0.7 => dev {change TpcFlowCharting}
