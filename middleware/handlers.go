@@ -229,7 +229,6 @@ func Query(w http.ResponseWriter, r *http.Request) {
 			case "Panel10":
 				grafnaResponseArray = append(grafnaResponseArray, table.Panel10(groupID))
 			}
-
 		} else {
 			switch metrics {
 			// case "MTTD", "MTTR", "MTBF":

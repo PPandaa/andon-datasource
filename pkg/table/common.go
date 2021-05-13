@@ -627,18 +627,24 @@ func Panel8(groupID string) map[string]interface{} {
 
 	totalTimes := map[string]int{}
 
-	var eventLatestCallRepairResults []map[string]interface{}
-	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$group": bson.M{"_id": "$TPCID", "count": bson.M{"$sum": 1}}}}).All(&eventLatestCallRepairResults)
-	for _, eventLatestCallRepairResult := range eventLatestCallRepairResults {
-		totalTimes[eventLatestCallRepairResult["_id"].(string)] += eventLatestCallRepairResult["count"].(int)
+	var eventLatestResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$group": bson.M{"_id": "$TPCID", "count": bson.M{"$sum": 1}}}}).All(&eventLatestResults)
+	// fmt.Println("EventLatestResults:", eventLatestResults)
+	for _, eventLatestResult := range eventLatestResults {
+		if eventLatestResult["_id"] != nil {
+			totalTimes[eventLatestResult["_id"].(string)] += eventLatestResult["count"].(int)
+		}
 	}
 
-	var eventHistCallRepairResults []map[string]interface{}
-	eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$group": bson.M{"_id": "$TPCID", "count": bson.M{"$sum": 1}}}}).All(&eventHistCallRepairResults)
-	for _, eventHistCallRepairResult := range eventHistCallRepairResults {
-		totalTimes[eventHistCallRepairResult["_id"].(string)] += eventHistCallRepairResult["count"].(int)
+	var eventHistResults []map[string]interface{}
+	eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$group": bson.M{"_id": "$TPCID", "count": bson.M{"$sum": 1}}}}).All(&eventHistResults)
+	// fmt.Println("EventHistResults:", eventHistResults)
+	for _, eventHistResult := range eventHistResults {
+		if eventHistResult["_id"] != nil {
+			totalTimes[eventHistResult["_id"].(string)] += eventHistResult["count"].(int)
+		}
 	}
-
+	// fmt.Println("TotalTimes:", totalTimes)
 	rows := []interface{}{}
 	for k, v := range totalTimes {
 		var tpcListResult map[string]interface{}
@@ -665,7 +671,7 @@ func Panel8(groupID string) map[string]interface{} {
 		"rows":    rows,
 		"type":    "table",
 	}
-	// fmt.Println(grafanaData)
+	// fmt.Println("GrafanaData:", grafanaData)
 	return grafanaData
 }
 
@@ -682,16 +688,20 @@ func Panel9(groupID string) map[string]interface{} {
 
 	eventTotalTimes := map[int]int{}
 
-	var eventLatestCallRepairResults []map[string]interface{}
-	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$group": bson.M{"_id": "$EventCode", "count": bson.M{"$sum": 1}}}}).All(&eventLatestCallRepairResults)
-	for _, eventLatestCallRepairResult := range eventLatestCallRepairResults {
-		eventTotalTimes[eventLatestCallRepairResult["_id"].(int)] += eventLatestCallRepairResult["count"].(int)
+	var eventLatestResults []map[string]interface{}
+	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$group": bson.M{"_id": "$EventCode", "count": bson.M{"$sum": 1}}}}).All(&eventLatestResults)
+	for _, eventLatestResult := range eventLatestResults {
+		if eventLatestResult["_id"] != nil {
+			eventTotalTimes[eventLatestResult["_id"].(int)] += eventLatestResult["count"].(int)
+		}
 	}
 
-	var eventHistCallRepairResults []map[string]interface{}
-	eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$group": bson.M{"_id": "$EventCode", "count": bson.M{"$sum": 1}}}}).All(&eventHistCallRepairResults)
-	for _, eventHistCallRepairResult := range eventHistCallRepairResults {
-		eventTotalTimes[eventHistCallRepairResult["_id"].(int)] += eventHistCallRepairResult["count"].(int)
+	var eventHistResults []map[string]interface{}
+	eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}, {"$group": bson.M{"_id": "$EventCode", "count": bson.M{"$sum": 1}}}}).All(&eventHistResults)
+	for _, eventHistResult := range eventHistResults {
+		if eventHistResult["_id"] != nil {
+			eventTotalTimes[eventHistResult["_id"].(int)] += eventHistResult["count"].(int)
+		}
 	}
 
 	rows := []interface{}{}
