@@ -2,7 +2,9 @@ package middleware
 
 import (
 	"DataSource/config"
-	"DataSource/pkg/table"
+	"DataSource/pkg/eventWorkOrderOverview"
+	"DataSource/pkg/failureMetric"
+	"DataSource/pkg/monitoringCenter"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -137,7 +139,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Println("Body: ", string(requestBody))
 
-	metrics := []string{"EventLatest", "Table-EventHist", "Singlestat-EventHist", "EventList", "LastMonthAbReasonRank", "MTTD", "MTTR", "MTBF", "FlowCharting-Machines", "FlowCharting-TPC", "Singlestat-Machines", "Singlestat-Event", "Singlestat-MeanTimeCompute", "Panel1Singlestat", "Panel1Table", "Panel3", "Panel5Singlestat", "Panel5Table", "Panel6Singlestat", "Panel6Table", "Panel8", "Panel9", "Panel10"}
+	metrics := []string{"Table-Event", "Singlestat-Event", "LastMonthAbReasonRank", "MTTD", "MTTR", "MTBF", "FlowCharting-Machines", "FlowCharting-TPC", "Singlestat-Machines", "Singlestat-Event", "Singlestat-MeanTimeCompute", "MC-Panel1Singlestat", "MC-Panel1Table", "MC-Panel3", "MC-Panel5Singlestat", "MC-Panel5Table", "MC-Panel6Singlestat", "MC-Panel6Table", "MC-Panel8", "MC-Panel9", "MC-Panel10"}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(metrics)
@@ -183,51 +185,38 @@ func Query(w http.ResponseWriter, r *http.Request) {
 		// fmt.Println("  RefID:", refID, "DataType:", dataType, " GroupID:", groupID, " MachineID:", machineID, " Metrics:", metrics, " From:", fromUnixTime, fromTime.Format(time.RFC3339), " To:", toUnixTime, toTime.Format(time.RFC3339))
 		if dataType == "table" {
 			switch metrics {
-			case "EventLatest":
-				grafnaResponseArray = append(grafnaResponseArray, table.EventLatest(groupID, machineID))
-			case "Table-EventHist":
-				grafnaResponseArray = append(grafnaResponseArray, table.EventHistTable(groupID, machineID, fromTime, toTime))
-			case "Singlestat-EventHist":
-				grafnaResponseArray = append(grafnaResponseArray, table.EventHistSinglestat(groupID, machineID, fromTime, toTime))
-			case "EventList":
-				grafnaResponseArray = append(grafnaResponseArray, table.EventList(groupID, fromTime, toTime))
+			case "Table-Event":
+				grafnaResponseArray = append(grafnaResponseArray, eventWorkOrderOverview.V1_EventTable(groupID, machineID, fromTime, toTime))
 			case "Singlestat-Event":
-				grafnaResponseArray = append(grafnaResponseArray, table.EventSinglestat(groupID, machineID))
-			case "Singlestat-Machines":
-				grafnaResponseArray = append(grafnaResponseArray, table.MachinesSinglestat(groupID))
+				grafnaResponseArray = append(grafnaResponseArray, eventWorkOrderOverview.V1_EventSinglestat(groupID, machineID, fromTime, toTime))
 			case "LastMonthAbReasonRank":
-				grafnaResponseArray = append(grafnaResponseArray, table.AbnormalReasonRank(groupID, fromTime, toTime))
-			case "FlowCharting-Machines":
-				grafnaResponseArray = append(grafnaResponseArray, table.MachinesFlowCharting(groupID, refID))
-			case "FlowCharting-TPC":
-				grafnaResponseArray = append(grafnaResponseArray, table.TpcFlowCharting(groupID, refID))
+				grafnaResponseArray = append(grafnaResponseArray, failureMetric.V1_AbnormalReasonRank(groupID, fromTime, toTime))
 			case "MTTD", "MTTR", "MTBF":
-				grafnaResponseArray = append(grafnaResponseArray, table.MeanTimeComputeV3(metrics, groupID, fromTime, toTime))
-				// v2
-				// grafnaResponseArrayElement, totalComputeValue := v2MeanTimeCompute(metrics, groupID, fromTime, toTime)
-				// grafnaResponseArray = append(grafnaResponseArray, grafnaResponseArrayElement)
-				// grafnaResponseArrayElement = meanTimeComputeSinglestat(metrics, groupID, totalComputeValue, fromTime, toTime)
-				// grafnaResponseArray = append(grafnaResponseArray, grafnaResponseArrayElement)
-			case "Panel1Singlestat":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel1Singlestat(groupID))
-			case "Panel1Table":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel1Table(groupID))
-			case "Panel3":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel3(groupID))
-			case "Panel5Singlestat":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel5Singlestat(groupID))
-			case "Panel5Table":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel5Table(groupID))
-			case "Panel6Singlestat":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel6Singlestat(groupID))
-			case "Panel6Table":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel6Table(groupID))
-			case "Panel8":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel8(groupID))
-			case "Panel9":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel9(groupID))
-			case "Panel10":
-				grafnaResponseArray = append(grafnaResponseArray, table.Panel10(groupID))
+				grafnaResponseArray = append(grafnaResponseArray, failureMetric.V1_MeanTimeCompute(metrics, groupID, fromTime, toTime))
+			case "FlowCharting-Machines":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.MachinesFlowCharting(groupID, refID))
+			case "FlowCharting-TPC":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.TpcFlowCharting(groupID, refID))
+			case "MC-Panel1Singlestat":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel1Singlestat(groupID))
+			case "MC-Panel1Table":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel1Table(groupID))
+			case "MC-Panel3":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel3(groupID))
+			case "MC-Panel5Singlestat":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel5Singlestat(groupID))
+			case "MC-Panel5Table":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel5Table(groupID))
+			case "MC-Panel6Singlestat":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel6Singlestat(groupID))
+			case "MC-Panel6Table":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel6Table(groupID))
+			case "MC-Panel8":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel8(groupID))
+			case "MC-Panel9":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel9(groupID))
+			case "MC-Panel10":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel10(groupID))
 			}
 		} else {
 			switch metrics {

@@ -1,4 +1,4 @@
-package table
+package monitoringCenter
 
 import (
 	"DataSource/config"
