@@ -1,13 +1,13 @@
 #!/bin/bash
 IMAGE_NAME="ifps-andon-datasource"
 DOCKER_REPO="iiicondor/$IMAGE_NAME"
-VERSION="1.0.9"
+VERSION="1.0.10"
 
 docker build -t $DOCKER_REPO:$VERSION .
 docker push $DOCKER_REPO:$VERSION
 docker tag $DOCKER_REPO:$VERSION $DOCKER_REPO:dev
 docker push $DOCKER_REPO:dev
-MESSAGE="change V1_EventTable,V1_EventSinglestat"
+MESSAGE="change V2_Panel3Singlestat"
 echo "[`date "+%Y-%m-%d %H:%M:%S"`] $VERSION => dev {$MESSAGE}" >> ImageInfo.txt
 
 # docker pull $DOCKER_REPO:$VERSION

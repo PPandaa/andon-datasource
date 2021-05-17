@@ -139,8 +139,11 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Println("Body: ", string(requestBody))
 
-	metrics := []string{"Table-Event", "Singlestat-Event", "LastMonthAbReasonRank", "MTTD", "MTTR", "MTBF", "FlowCharting-Machines", "FlowCharting-TPC", "Singlestat-Machines", "Singlestat-Event", "Singlestat-MeanTimeCompute", "MC-Panel1Singlestat", "MC-Panel1Table", "MC-Panel3", "MC-Panel5Singlestat", "MC-Panel5Table", "MC-Panel6Singlestat", "MC-Panel6Table", "MC-Panel8", "MC-Panel9", "MC-Panel10"}
-
+	metrics := []string{}
+	basic := []string{"Table-Event", "Singlestat-Event", "LastMonthAbReasonRank", "MTTD", "MTTR", "MTBF", "FlowCharting-Machines", "FlowCharting-TPC", "Singlestat-Machines", "Singlestat-Event", "Singlestat-MeanTimeCompute"}
+	// v1_MC := []string{"MC-Panel1Singlestat", "MC-Panel1Table", "MC-Panel3", "MC-Panel5Singlestat", "MC-Panel5Table", "MC-Panel6Singlestat", "MC-Panel6Table", "MC-Panel8", "MC-Panel9", "MC-Panel10"}
+	v2_MC := []string{"MC-Panel1", "MC-Panel2Singlestat", "MC-Panel2Table", "MC-Panel3Singlestat", "MC-Panel3Table", "MC-Panel4Singlestat", "MC-Panel4Table", "MC-Panel5Singlestat", "MC-Panel5Table", "MC-Panel6Singlestat", "MC-Panel6Table", "MC-Panel8", "MC-Panel9"}
+	metrics = append(basic, v2_MC...)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(metrics)
 }
@@ -197,26 +200,52 @@ func Query(w http.ResponseWriter, r *http.Request) {
 				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.MachinesFlowCharting(groupID, refID))
 			case "FlowCharting-TPC":
 				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.TpcFlowCharting(groupID, refID))
-			case "MC-Panel1Singlestat":
-				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel1Singlestat(groupID))
-			case "MC-Panel1Table":
-				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel1Table(groupID))
-			case "MC-Panel3":
-				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel3(groupID))
+				// case "MC-Panel1Singlestat":
+				// 	grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel1Singlestat(groupID))
+				// case "MC-Panel1Table":
+				// 	grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel1Table(groupID))
+				// case "MC-Panel3":
+				// 	grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel3(groupID))
+				// case "MC-Panel5Singlestat":
+				// 	grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel5Singlestat(groupID))
+				// case "MC-Panel5Table":
+				// 	grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel5Table(groupID))
+				// case "MC-Panel6Singlestat":
+				// 	grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel6Singlestat(groupID))
+				// case "MC-Panel6Table":
+				// 	grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel6Table(groupID))
+				// case "MC-Panel8":
+				// 	grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel8(groupID))
+				// case "MC-Panel9":
+				// 	grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel9(groupID))
+				// case "MC-Panel10":
+				// 	grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel10(groupID))
+			case "MC-Panel1":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel1(groupID))
+			case "MC-Panel2Singlestat":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel2Singlestat(groupID))
+			case "MC-Panel2Table":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel2Table(groupID))
+			case "MC-Panel3Singlestat":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel3Singlestat(groupID))
+			case "MC-Panel3Table":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel3Table(groupID))
+			case "MC-Panel4Singlestat":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel4Singlestat(groupID))
+			case "MC-Panel4Table":
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel4Table(groupID))
 			case "MC-Panel5Singlestat":
-				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel5Singlestat(groupID))
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel5Singlestat(groupID))
 			case "MC-Panel5Table":
-				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel5Table(groupID))
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel5Table(groupID))
 			case "MC-Panel6Singlestat":
-				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel6Singlestat(groupID))
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel6Singlestat(groupID))
 			case "MC-Panel6Table":
-				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel6Table(groupID))
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel6Table(groupID))
 			case "MC-Panel8":
-				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel8(groupID))
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel8(groupID))
 			case "MC-Panel9":
-				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel9(groupID))
-			case "MC-Panel10":
-				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V1_Panel10(groupID))
+				grafnaResponseArray = append(grafnaResponseArray, monitoringCenter.V2_Panel9(groupID))
 			}
 		} else {
 			switch metrics {

@@ -52,3 +52,5 @@
 [2021-05-17 11:22:33] 1.0.9 => dev {change function name}
 [2021-05-17 11:31:37] 1.0.9 => dev {change V1_EventTable,V1_EventSinglestat}
 [2021-05-17 11:38:31] 1.0.9 => dev {change V1_EventTable,V1_EventSinglestat}
+[2021-05-17 15:14:13] 1.0.10 => dev {add V2_MC}
+[2021-05-17 16:22:22] 1.0.10 => dev {change V2_Panel3Singlestat}
