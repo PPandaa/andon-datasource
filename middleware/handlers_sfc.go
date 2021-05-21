@@ -212,7 +212,7 @@ func GetWorkOrderList(orderId, station string) map[string]interface{} {
 func GetWorkOrderDetail(orderId, station string) map[string]interface{} {
 	PrintParameter(orderId, station)
 	trigger := func(i interface{}) ([]byte, error) {
-		url := apiUrl + "/workorders?detail=true"
+		url := apiUrl + "/workorders"
 		if station != "" {
 			url = url + "&station=" + station
 		}
