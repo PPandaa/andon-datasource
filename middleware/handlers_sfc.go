@@ -66,7 +66,7 @@ func PrintParameter(i ...interface{}) {
 	fmt.Println(aurora.Yellow(i))
 }
 
-// 工單工站狀態 SfcStatsStation
+// 工單工站狀態 SfcStatsStation (目前未使用)
 func GetTables(orderId, station string) map[string]interface{} {
 	PrintParameter(orderId, station)
 	trigger := func(i interface{}) ([]byte, error) {
@@ -173,6 +173,7 @@ func GetWorkOrderList(orderId, station string) map[string]interface{} {
 		for _, result := range Results {
 			var row []interface{}
 			row = append(row, result["WorkOrderId"])
+			row = append(row, result["SubWorkOrderId"])
 			row = append(row, result["Reporter"])
 			row = append(row, result["StationName"])
 			row = append(row, result["CompletedQty"])
@@ -189,6 +190,7 @@ func GetWorkOrderList(orderId, station string) map[string]interface{} {
 
 	columns := []map[string]string{
 		{"text": "WorkOrderId", "type": "string"},
+		{"text": "SubWorkOrderId", "type": "string"},
 		{"text": "Reporter", "type": "string"},
 		{"text": "StationName", "type": "string"},
 		{"text": "CompletedQty", "type": "string"},

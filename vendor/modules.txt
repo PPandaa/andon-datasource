@@ -1,0 +1,26 @@
+# github.com/bitly/go-simplejson v0.5.0
+github.com/bitly/go-simplejson
+# github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
+github.com/golang/glog
+# github.com/gorilla/mux v1.8.0
+github.com/gorilla/mux
+# github.com/imroc/req v0.3.0
+github.com/imroc/req
+# github.com/joho/godotenv v1.3.0
+github.com/joho/godotenv
+# github.com/logrusorgru/aurora v2.0.3+incompatible
+github.com/logrusorgru/aurora
+# github.com/rs/cors v1.7.0
+github.com/rs/cors
+# github.com/tidwall/gjson v1.6.7
+github.com/tidwall/gjson
+# github.com/tidwall/match v1.0.3
+github.com/tidwall/match
+# github.com/tidwall/pretty v1.0.2
+github.com/tidwall/pretty
+# gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
+gopkg.in/mgo.v2
+gopkg.in/mgo.v2/bson
+gopkg.in/mgo.v2/internal/json
+gopkg.in/mgo.v2/internal/sasl
+gopkg.in/mgo.v2/internal/scram
