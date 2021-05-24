@@ -16,7 +16,11 @@ const (
 	envName = "demo.env"
 )
 
+func TestFunc() {
+	middleware.GetWorkOrderDetail("", "")
+}
 func main() {
+
 	// middleware.TestDatasourceFn()
 	log.Println("Activation")
 	err := godotenv.Load(envName)
@@ -24,6 +28,9 @@ func main() {
 		log.Fatalf("Error loading env file")
 	}
 	middleware.Start()
+
+	TestFunc()
+
 	mongodbURL := os.Getenv("MONGODB_URL")
 	mongodbDatabase := os.Getenv("MONGODB_DATABASE")
 	fmt.Println("Version ->", "2021/1/7 16:07")
