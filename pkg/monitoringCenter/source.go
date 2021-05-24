@@ -550,7 +550,7 @@ func V2_Panel2Table(groupID string) map[string]interface{} {
 	rows := []interface{}{}
 	for _, eventLatestResult := range eventLatestResults {
 		var row []interface{}
-		if eventLatestResult["MachineName"] != nil {
+		if eventLatestResult["MachineName"] != nil && len(eventLatestResult["MachineName"].(string)) != 0 {
 			row = []interface{}{eventLatestResult["MachineName"], eventLatestResult["AbnormalLastingSecond"]}
 		} else {
 			row = []interface{}{eventLatestResult["TPCName"], eventLatestResult["AbnormalLastingSecond"]}
@@ -604,7 +604,7 @@ func V2_Panel3Table(groupID string) map[string]interface{} {
 	rows := []interface{}{}
 	for _, eventLatestResult := range eventLatestResults {
 		var row []interface{}
-		if eventLatestResult["MachineName"] != nil {
+		if eventLatestResult["MachineName"] != nil && len(eventLatestResult["MachineName"].(string)) != 0 {
 			row = []interface{}{eventLatestResult["MachineName"], eventLatestResult["AbnormalLastingSecond"]}
 		} else {
 			row = []interface{}{eventLatestResult["TPCName"], eventLatestResult["AbnormalLastingSecond"]}
@@ -658,7 +658,7 @@ func V2_Panel4Table(groupID string) map[string]interface{} {
 	rows := []interface{}{}
 	for _, eventLatestResult := range eventLatestResults {
 		var row []interface{}
-		if eventLatestResult["MachineName"] != nil {
+		if eventLatestResult["MachineName"] != nil && len(eventLatestResult["MachineName"].(string)) != 0 {
 			row = []interface{}{eventLatestResult["MachineName"], eventLatestResult["AbnormalLastingSecond"]}
 		} else {
 			row = []interface{}{eventLatestResult["TPCName"], eventLatestResult["AbnormalLastingSecond"]}
@@ -688,7 +688,7 @@ func V2_Panel5Singlestat(groupID string) map[string]interface{} {
 	var eventLatestResults []map[string]interface{}
 	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}}).All(&eventLatestResults)
 	for _, eventLatestResult := range eventLatestResults {
-		if eventLatestResult["PrincipalID"] != nil {
+		if eventLatestResult["PrincipalID"] != nil && len(eventLatestResult["PrincipalID"].(string)) != 0 {
 			eventWithPrincipalCount += 1
 		}
 	}
@@ -842,7 +842,7 @@ func V2_Panel8(groupID string) map[string]interface{} {
 	eventLatestCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}}).All(&eventLatestResults)
 	// fmt.Println("EventLatestResults:", eventLatestResults)
 	for _, eventLatestResult := range eventLatestResults {
-		if eventLatestResult["MachineID"] != nil {
+		if eventLatestResult["MachineID"] != nil && len(eventLatestResult["MachineID"].(string)) != 0 {
 			totalTimes[eventLatestResult["MachineID"].(string)] += 1
 			totalLastingSeconds[eventLatestResult["MachineID"].(string)] += eventLatestResult["AbnormalLastingSecond"].(float64)
 		}
@@ -852,7 +852,7 @@ func V2_Panel8(groupID string) map[string]interface{} {
 	eventHistCollection.Pipe([]bson.M{{"$match": bson.M{"GroupID": groupID}}, {"$match": bson.M{"AbnormalStartTime": bson.M{"$gte": starttimeT, "$lte": endtimeT}}}}).All(&eventHistResults)
 	// fmt.Println("EventHistResults:", eventHistResults)
 	for _, eventHistResult := range eventHistResults {
-		if eventHistResult["MachineID"] != nil {
+		if eventHistResult["MachineID"] != nil && len(eventHistResult["MachineID"].(string)) != 0 {
 			totalTimes[eventHistResult["MachineID"].(string)] += 1
 			totalLastingSeconds[eventHistResult["MachineID"].(string)] += eventHistResult["AbnormalLastingSecond"].(float64)
 		}
