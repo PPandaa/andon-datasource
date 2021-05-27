@@ -20,27 +20,21 @@ func TestConnection(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(msg))
 }
 
-var (
-	SfcWorkOrderDetail            = "SfcWorkOrderDetail"
-	SfcWorkOrderList              = "SfcWorkOrderList"
-	SfcStatsStation               = "SfcStatsStation"
-	SfcCounts                     = "SfcCounts"
-	SfcSwitchingPanelWorkorderIds = "SfcSwitchingPanelWorkorderIds"
-)
-
 //Search ...
 func Search(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("/search")
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Println("Body: ", string(requestBody))
-	metrics := []string{SfcWorkOrderDetail, SfcWorkOrderList, SfcStatsStation, SfcCounts, SfcSwitchingPanelWorkorderIds}
+	metrics := getMetrics()
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(metrics)
 }
 
 //Query ...
 func Query(w http.ResponseWriter, r *http.Request) {
-	var grafnaResponseArray []map[string]interface{}
+	// var grafnaResponseArray []map[string]interface{}
+	var grafnaResponseArray []interface{}
+
 	fmt.Println("/query")
 	requestBody, _ := simplejson.NewFromReader(r.Body)
 	fmt.Println("Body: ", requestBody)
@@ -72,17 +66,10 @@ func Query(w http.ResponseWriter, r *http.Request) {
 		TestParameter("orderId:", orderId)
 
 		dataType := requestBody.Get("targets").GetIndex(indexOfTargets).Get("type").MustString()
+
 		if dataType == "table" {
-			switch target {
-			case SfcWorkOrderDetail:
-				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrderDetail(orderId, station)) //工單狀態
-			case SfcWorkOrderList:
-				grafnaResponseArray = append(grafnaResponseArray, GetWorkOrderList(orderId, station)) //報工紀錄清單
-			case SfcStatsStation:
-				grafnaResponseArray = append(grafnaResponseArray, GetTables(orderId, station)) //工單工站狀態
-			case SfcCounts:
-				grafnaResponseArray = append(grafnaResponseArray, GetCounts(orderId, station))
-			}
+			fmt.Println("target:", target)
+			grafnaResponseArray = append(grafnaResponseArray, doFuncByMetric(target, orderId, station))
 		}
 	}
 	// jsonStr, _ := json.Marshal(grafnaResponseArray)
@@ -90,9 +77,4 @@ func Query(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println(grafnaResponseArray)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(grafnaResponseArray)
-}
-
-func GetWorkorderIds(w http.ResponseWriter, r *http.Request) {
-	res := getWorkorderIds()
-	json.NewEncoder(w).Encode(res)
 }

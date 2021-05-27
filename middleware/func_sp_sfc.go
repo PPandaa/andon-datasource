@@ -2,16 +2,22 @@ package middleware
 
 import (
 	"encoding/json"
+	"net/http"
 
 	"github.com/golang/glog"
 	"github.com/imroc/req"
 	// . "github.com/logrusorgru/aurora"
 )
 
+func GetWorkorderIds(w http.ResponseWriter, r *http.Request) {
+	res := getWorkorderIds()
+	json.NewEncoder(w).Encode(res)
+}
+
 //switchingPanel
 func getWorkorderIds() []map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
-		url := apiUrl + "/grafana/switchingPanel/workorders/id"
+		url := Url + "/grafana/switchingPanel/workorders/id"
 		//convert object to json
 		param := req.BodyJSON(&i)
 		//res就是打api成功拿到的response, 如果打失敗則拿到err
