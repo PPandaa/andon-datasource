@@ -46,19 +46,19 @@ func setMetrics() {
 		return Wo(orderId, station, timeFrom)
 	}
 	Metrics["WoCount"] = func(orderId string, station string, timeFrom string) interface{} {
-		return WoCount(orderId, station)
+		return WoCount(orderId, station, timeFrom)
 	}
 	Metrics["CompletedWo"] = func(orderId string, station string, timeFrom string) interface{} {
-		return CompletedWo(orderId, station)
+		return CompletedWo(orderId, station, timeFrom)
 	}
 	Metrics["CompletedWoCount"] = func(orderId string, station string, timeFrom string) interface{} {
-		return CompletedWoCount(orderId, station)
+		return CompletedWoCount(orderId, station, timeFrom)
 	}
 	Metrics["ExecutionWo"] = func(orderId string, station string, timeFrom string) interface{} {
-		return ExecutionWo(orderId, station)
+		return ExecutionWo(orderId, station, timeFrom)
 	}
 	Metrics["ExecutionWoCount"] = func(orderId string, station string, timeFrom string) interface{} {
-		return ExecutionWoCount(orderId, station)
+		return ExecutionWoCount(orderId, station, timeFrom)
 	}
 	Metrics["IdleWo"] = func(orderId string, station string, timeFrom string) interface{} {
 		return IdleWo(orderId, station)
@@ -79,7 +79,7 @@ func setMetrics() {
 		return Wolist(orderId, station)
 	}
 	Metrics["OpenWoCount"] = func(orderId string, station string, timeFrom string) interface{} {
-		return OpenWoCount(orderId, station)
+		return OpenWoCount(orderId, station, timeFrom)
 	}
 	Metrics["Counts"] = func(orderId string, station string, timeFrom string) interface{} {
 		return GetCounts(orderId, station)

@@ -30,36 +30,41 @@ func Wo(orderId, station string, timeFrom string) map[string]interface{} {
 	return m
 }
 
-func WoCount(orderId, station string) map[string]interface{} {
+func WoCount(orderId, station, timeFrom string) map[string]interface{} {
 	// PrintParameter(orderId, station)
 	api := "/grafana/table/Wo/Count"
+	api = concateUrl(api, orderId, station, timeFrom)
 	m, _ := trigger(api, nil)
 	return m
 }
 
-func CompletedWo(orderId, station string) map[string]interface{} {
+func CompletedWo(orderId, station, timeFrom string) map[string]interface{} {
 	// PrintParameter(orderId, station)
 	api := "/grafana/table/CompletedWo"
+	api = concateUrl(api, orderId, station, timeFrom)
 	m, _ := trigger(api, nil)
 	return m
 }
 
-func CompletedWoCount(orderId, station string) map[string]interface{} {
+func CompletedWoCount(orderId, station, timeFrom string) map[string]interface{} {
 	// PrintParameter(orderId, station)
 	api := "/grafana/table/CompletedWo/Count"
+	api = concateUrl(api, orderId, station, timeFrom)
 	m, _ := trigger(api, nil)
 	return m
 }
 
-func ExecutionWoCount(orderId, station string) map[string]interface{} {
+func ExecutionWoCount(orderId, station, timeFrom string) map[string]interface{} {
 	// PrintParameter(orderId, station)
 	api := "/grafana/table/ExecutionWo/Count"
+	api = concateUrl(api, orderId, station, timeFrom)
 	m, _ := trigger(api, nil)
 	return m
 }
-func ExecutionWo(orderId, station string) map[string]interface{} {
+func ExecutionWo(orderId, station, timeFrom string) map[string]interface{} {
 	// PrintParameter(orderId, station)
 	api := "/grafana/table/ExecutionWo"
+	api = concateUrl(api, orderId, station, timeFrom)
 	m, _ := trigger(api, nil)
 	return m
 }
@@ -106,9 +111,11 @@ func Wolist(orderId, station string) map[string]interface{} {
 	return m
 }
 
-func OpenWoCount(orderId, station string) map[string]interface{} {
+func OpenWoCount(orderId, station string, timeFrom string) map[string]interface{} {
 	// PrintParameter(orderId, station)
 	api := "/grafana/table/OpenWo/Count"
+	api = concateUrl(api, orderId, station, timeFrom)
+	PrintParameter("api:", api)
 	m, _ := trigger(api, nil)
 	return m
 }
