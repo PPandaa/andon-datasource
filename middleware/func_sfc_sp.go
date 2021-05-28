@@ -9,6 +9,7 @@ import (
 	// . "github.com/logrusorgru/aurora"
 )
 
+//=get moId
 func GetWorkorderIds(w http.ResponseWriter, r *http.Request) {
 	res := getWorkorderIds()
 	json.NewEncoder(w).Encode(res)

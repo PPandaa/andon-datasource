@@ -35,9 +35,9 @@ func Query(w http.ResponseWriter, r *http.Request) {
 	// var grafnaResponseArray []map[string]interface{}
 	var grafnaResponseArray []interface{}
 
-	fmt.Println("/query")
+	// fmt.Println("/query")
 	requestBody, _ := simplejson.NewFromReader(r.Body)
-	fmt.Println("Body: ", requestBody)
+	// fmt.Println("Body: ", requestBody)
 	// fmt.Println(requestBody.Get("targets").MustArray())
 	for indexOfTargets := 0; indexOfTargets < len(requestBody.Get("targets").MustArray()); indexOfTargets++ {
 		target := requestBody.Get("targets").GetIndex(indexOfTargets).Get("metrics").MustString()
@@ -45,31 +45,42 @@ func Query(w http.ResponseWriter, r *http.Request) {
 		//yoga
 		var station string
 		var orderId string
+		var timeFrom string
+
+		//orderId
 		targetOrderId := requestBody.Get("targets").GetIndex(indexOfTargets).Get("orderId").MustString()
 		if targetOrderId != "" {
 			//get scopedVars OrderId
 			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
 			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "orderId.value").String()
-			fmt.Println("orderId value:", scopedVarsJsonValue)
+			// fmt.Println("orderId value:", scopedVarsJsonValue)
 			orderId = scopedVarsJsonValue
 		}
+		//station
 		targetStation := requestBody.Get("targets").GetIndex(indexOfTargets).Get("stationId").MustString()
 		if targetStation != "" {
 			//get scopedVars OrderId
 			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
 			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "machineId.value").String() //#注意stationId對應的是machineId
-			fmt.Println("station value:", scopedVarsJsonValue)
+			// fmt.Println("station value:", scopedVarsJsonValue)
 			station = scopedVarsJsonValue
 		}
+		// time
+		func() {
+			// from 不會放在target裡面
+			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
+			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "__from.value").String()
+			// fmt.Println("time from value:", scopedVarsJsonValue)
+			timeFrom = scopedVarsJsonValue
+		}()
 
-		TestParameter("station:", station)
-		TestParameter("orderId:", orderId)
+		TestParameter("station:", station, "orderId:", orderId, "timeFrom:", timeFrom)
 
 		dataType := requestBody.Get("targets").GetIndex(indexOfTargets).Get("type").MustString()
 
 		if dataType == "table" {
 			fmt.Println("target:", target)
-			grafnaResponseArray = append(grafnaResponseArray, doFuncByMetric(target, orderId, station))
+			grafnaResponseArray = append(grafnaResponseArray, doFuncByMetric(target, orderId, station, timeFrom))
 		}
 	}
 	// jsonStr, _ := json.Marshal(grafnaResponseArray)

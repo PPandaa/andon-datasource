@@ -1,5 +1,7 @@
 package middleware
 
+import "fmt"
+
 /*
 	// grafana simple json
 	//wo
@@ -18,10 +20,13 @@ package middleware
 	apiv1.GET("/grafana/table/OperationSpot", v1.GetOperationSpot)
 */
 
-func Wo(orderId, station string) map[string]interface{} {
-	// PrintParameter(orderId, station)
+func Wo(orderId, station string, timeFrom string) map[string]interface{} {
+	PrintParameter("/grafana/table/Wo...")
 	api := "/grafana/table/Wo"
+	api = concateUrl(api, orderId, station, timeFrom)
+	PrintParameter("api:", api)
 	m, _ := trigger(api, nil)
+	fmt.Println(m)
 	return m
 }
 
@@ -90,4 +95,33 @@ func OperationSpot(orderId, station string) map[string]interface{} {
 	api := "/grafana/table/OperationSpot"
 	m, _ := trigger(api, nil)
 	return m
+}
+
+//orderId= workorderId= moId
+func Wolist(orderId, station string) map[string]interface{} {
+	// PrintParameter(orderId, station)
+	api := "/grafana/table/Wolist"
+	api = concateUrl(api, orderId, station, "")
+	m, _ := trigger(api, nil)
+	return m
+}
+
+func OpenWoCount(orderId, station string) map[string]interface{} {
+	// PrintParameter(orderId, station)
+	api := "/grafana/table/OpenWo/Count"
+	m, _ := trigger(api, nil)
+	return m
+}
+
+func concateUrl(api, orderId, station string, timeFrom string) string {
+	if orderId != "" {
+		api = api + "?workorderId=" + orderId + "&"
+	}
+	if station != "" {
+		api = api + "?station=" + station + "&"
+	}
+	if timeFrom != "" {
+		api = api + "?timeFrom=" + timeFrom + "&"
+	}
+	return api
 }
