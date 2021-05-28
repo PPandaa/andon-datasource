@@ -40,21 +40,21 @@ func init() {
 */
 
 func setMetrics() {
-	Metrics["Wo"] = func(a string, b string) interface{} { return Wo(a, b) }
-	Metrics["WoCount"] = func(a string, b string) interface{} { return WoCount(a, b) }
-	Metrics["CompletedWo"] = func(a string, b string) interface{} { return CompletedWo(a, b) }
-	Metrics["CompletedWoCount"] = func(a string, b string) interface{} { return CompletedWoCount(a, b) }
-	Metrics["ExecutionWo"] = func(a string, b string) interface{} { return ExecutionWo(a, b) }
-	Metrics["ExecutionWoCount"] = func(a string, b string) interface{} { return ExecutionWoCount(a, b) }
-	Metrics["IdleWo"] = func(a string, b string) interface{} { return IdleWo(a, b) }
-	Metrics["DefecRateWOProcess"] = func(a string, b string) interface{} { return DefecRateWOProcess(a, b) }
+	Metrics["Wo"] = func(orderId string, station string) interface{} { return Wo(orderId, station) }
+	Metrics["WoCount"] = func(orderId string, station string) interface{} { return WoCount(orderId, station) }
+	Metrics["CompletedWo"] = func(orderId string, station string) interface{} { return CompletedWo(orderId, station) }
+	Metrics["CompletedWoCount"] = func(orderId string, station string) interface{} { return CompletedWoCount(orderId, station) }
+	Metrics["ExecutionWo"] = func(orderId string, station string) interface{} { return ExecutionWo(orderId, station) }
+	Metrics["ExecutionWoCount"] = func(orderId string, station string) interface{} { return ExecutionWoCount(orderId, station) }
+	Metrics["IdleWo"] = func(orderId string, station string) interface{} { return IdleWo(orderId, station) }
+	Metrics["DefecRateWOProcess"] = func(orderId string, station string) interface{} { return DefecRateWOProcess(orderId, station) }
 
-	Metrics["CompletedMo"] = func(a string, b string) interface{} { return CompletedMo(a, b) }
-	Metrics["CompletedMoCount"] = func(a string, b string) interface{} { return CompletedMoCount(a, b) }
+	Metrics["CompletedMo"] = func(orderId string, station string) interface{} { return CompletedMo(orderId, station) }
+	Metrics["CompletedMoCount"] = func(orderId string, station string) interface{} { return CompletedMoCount(orderId, station) }
 
-	Metrics["OperationSpot"] = func(a string, b string) interface{} { return OperationSpot(a, b) }
+	Metrics["OperationSpot"] = func(orderId string, station string) interface{} { return OperationSpot(orderId, station) }
 
-	Metrics["Counts"] = func(a string, b string) interface{} { return GetCounts(a, b) }
+	Metrics["Counts"] = func(orderId string, station string) interface{} { return GetCounts(orderId, station) }
 }
 
 func getMetrics() (ss []string) {
