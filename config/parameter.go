@@ -28,6 +28,7 @@ var (
 	MongodbDatabase   string
 	MongodbUsername   string
 	MongodbPassword   string
+	MongodbAuthSource string
 	TaipeiTimeZone, _ = time.LoadLocation("Asia/Taipei")
 	UTCTimeZone, _    = time.LoadLocation("UTC")
 

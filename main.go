@@ -4,6 +4,7 @@ import (
 	"DataSource/config"
 	"DataSource/router"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -35,7 +36,16 @@ func initGlobalVar() {
 		config.MongodbURL = os.Getenv("MONGODB_URL")
 		config.MongodbDatabase = os.Getenv("MONGODB_DATABASE")
 		config.MongodbUsername = os.Getenv("MONGODB_USERNAME")
-		config.MongodbPassword = os.Getenv("MONGODB_PASSWORD")
+		config.MongodbAuthSource = os.Getenv("MONGODB_AUTH_SOURCE")
+		mongodbPasswordFile := os.Getenv("MONGODB_PASSWORD_FILE")
+		if len(mongodbPasswordFile) != 0 {
+			mongodbPassword, err := ioutil.ReadFile(mongodbPasswordFile)
+			if err != nil {
+				fmt.Println("MongoDB Password File", err, "->", "FilePath:", mongodbPasswordFile)
+			} else {
+				config.MongodbPassword = string(mongodbPassword)
+			}
+		}
 	}
 
 	newSession, err := mgo.Dial(config.MongodbURL)

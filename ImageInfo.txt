@@ -57,3 +57,4 @@
 [2021-05-24 12:46:50] 1.0.10 => demo
 [2021-05-24 15:00:38] 1.0.10 => dev {change V2_Panel2Table}
 [2021-05-24 15:10:09] 1.0.10 => demo
+[2021-06-07 14:26:54] 1.0.11 => dev {change initGlobalVar -> add MONGODB_AUTH_SOURCE MONGODB_PASSWORD_FILE}

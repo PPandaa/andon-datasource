@@ -1,13 +1,13 @@
 #!/bin/bash
 IMAGE_NAME="ifps-andon-datasource"
 DOCKER_REPO="iiicondor/$IMAGE_NAME"
-VERSION="1.0.10"
+VERSION="1.0.11"
 
 docker build -t $DOCKER_REPO:$VERSION .
 docker push $DOCKER_REPO:$VERSION
 docker tag $DOCKER_REPO:$VERSION $DOCKER_REPO:dev
 docker push $DOCKER_REPO:dev
-MESSAGE="change V2_Panel2Table"
+MESSAGE="change initGlobalVar -> add MONGODB_AUTH_SOURCE MONGODB_PASSWORD_FILE"
 echo "[`date "+%Y-%m-%d %H:%M:%S"`] $VERSION => dev {$MESSAGE}" >> ImageInfo.txt
 
 # docker pull $DOCKER_REPO:$VERSION
