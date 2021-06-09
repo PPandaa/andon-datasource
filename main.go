@@ -58,10 +58,17 @@ func initGlobalVar() {
 		}
 	}
 	config.Session = newSession
-	config.DB = config.Session.DB(config.MongodbDatabase)
-	config.DB.Login(config.MongodbUsername, config.MongodbPassword)
+	if len(ensaasService) != 0 {
+		config.DB = config.Session.DB(config.MongodbDatabase)
+		config.DB.Login(config.MongodbUsername, config.MongodbPassword)
+	} else {
+		config.DB = config.Session.DB(config.MongodbAuthSource)
+		config.DB.Login(config.MongodbUsername, config.MongodbPassword)
+		config.DB = config.Session.DB(config.MongodbDatabase)
+	}
 	fmt.Println("----------", time.Now().In(config.TaipeiTimeZone), "----------")
 	fmt.Println("MongoDB Connect ->", " URL:", config.MongodbURL, " Database:", config.MongodbDatabase)
+	fmt.Println(config.DB.CollectionNames())
 }
 
 func main() {
