@@ -68,7 +68,6 @@ func initGlobalVar() {
 	}
 	fmt.Println("----------", time.Now().In(config.TaipeiTimeZone), "----------")
 	fmt.Println("MongoDB Connect ->", " URL:", config.MongodbURL, " Database:", config.MongodbDatabase)
-	fmt.Println(config.DB.CollectionNames())
 }
 
 func main() {
