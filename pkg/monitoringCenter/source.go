@@ -914,6 +914,13 @@ func V2_Panel9(groupID string) map[string]interface{} {
 		row = append(row, eventLatestResult["AbnormalSolution"])
 		row = append(row, eventLatestResult["AbnormalCode"])
 		row = append(row, eventLatestResult["AbnormalPosition"])
+
+		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["WIP_NO"])
+		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["UNIT_NO"])
+		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["PLAN_QTY"])
+		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["MODEL_NO"])
+		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["LINE_DESC"])
+		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["ITEM_NO"])
 		// fmt.Println(row)
 		rows = append(rows, row)
 	}
@@ -943,6 +950,12 @@ func V2_Panel9(groupID string) map[string]interface{} {
 		{"text": "AbnormalSolution", "type": "string"},
 		{"text": "AbnormalCode", "type": "number"},
 		{"text": "AbnormalPosition", "type": "string"},
+		{"text": "WIP_NO", "type": "string"},
+		{"text": "UNIT_NO", "type": "string"},
+		{"text": "PLAN_QTY", "type": "number"},
+		{"text": "MODEL_NO", "type": "string"},
+		{"text": "LINE_DESC", "type": "string"},
+		{"text": "ITEM_NO", "type": "string"},
 	}
 
 	grafanaData := map[string]interface{}{
