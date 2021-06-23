@@ -42,10 +42,10 @@ func Query(w http.ResponseWriter, r *http.Request) {
 	for indexOfTargets := 0; indexOfTargets < len(requestBody.Get("targets").MustArray()); indexOfTargets++ {
 		target := requestBody.Get("targets").GetIndex(indexOfTargets).Get("metrics").MustString()
 
-		//yoga
 		var station string
 		var orderId string
 		var timeFrom string
+		var group string
 
 		//orderId
 		targetOrderId := requestBody.Get("targets").GetIndex(indexOfTargets).Get("orderId").MustString()
@@ -73,14 +73,23 @@ func Query(w http.ResponseWriter, r *http.Request) {
 			// fmt.Println("time from value:", scopedVarsJsonValue)
 			timeFrom = scopedVarsJsonValue
 		}()
+		//station
+		targetGroup := requestBody.Get("targets").GetIndex(indexOfTargets).Get("group").MustString()
+		if targetGroup != "" {
+			//get scopedVars OrderId
+			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
+			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "machineId.value").String() //#注意stationId對應的是machineId
+			// fmt.Println("station value:", scopedVarsJsonValue)
+			group = scopedVarsJsonValue
+		}
 
-		TestParameter("station:", station, "orderId:", orderId, "timeFrom:", timeFrom)
+		PrintParameterCyan("station:", station, "orderId:", orderId, "timeFrom:", timeFrom, "group:", group)
 
 		dataType := requestBody.Get("targets").GetIndex(indexOfTargets).Get("type").MustString()
 
 		if dataType == "table" {
 			fmt.Println("target:", target)
-			grafnaResponseArray = append(grafnaResponseArray, doFuncByMetric(target, orderId, station, timeFrom))
+			grafnaResponseArray = append(grafnaResponseArray, doFuncByMetric(target, orderId, station, timeFrom, group))
 		}
 	}
 	// jsonStr, _ := json.Marshal(grafnaResponseArray)

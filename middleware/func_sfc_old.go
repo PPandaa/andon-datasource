@@ -9,7 +9,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func GetCounts(orderId, station string) map[string]interface{} {
+func GetCounts(orderId, station, timeFrom, group string) map[string]interface{} {
 	trigger := func(i interface{}) ([]byte, error) {
 		url := Url + "/grafana/counts"
 		if station != "" {
@@ -211,6 +211,8 @@ func trigger(api string, bodyParameter interface{}) (grafanaData map[string]inte
 	if err != nil {
 		return nil, err
 	}
+
+	PrintParameter("trigger response:", string(res))
 
 	err = json.Unmarshal(res, &grafanaData)
 	if err != nil {

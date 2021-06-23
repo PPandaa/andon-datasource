@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # 正式用
-VERSION="demo"
+# VERSION="demo"
+VERSION="1.0.0"
 CONTAINER="ifps-sfc-datasource"
 
 # docker location

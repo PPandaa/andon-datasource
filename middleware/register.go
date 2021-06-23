@@ -14,10 +14,10 @@ func Start() {
 	log.Println("url=", Url)
 }
 
-var Metrics map[string]func(orderId string, station string, timeFrom string) interface{}
+var Metrics map[string]func(orderId string, station string, timeFrom string, group string) interface{}
 
 func init() {
-	Metrics = make(map[string]func(orderId string, station string, timeFrom string) interface{})
+	Metrics = make(map[string]func(orderId string, station string, timeFrom string, group string) interface{})
 	setMetrics()
 }
 
@@ -42,47 +42,47 @@ func init() {
 //todo: 抽出orderId string, station string, timeFrom string為struct
 
 func setMetrics() {
-	Metrics["Wo"] = func(orderId string, station string, timeFrom string) interface{} {
-		return Wo(orderId, station, timeFrom)
+	Metrics["Wo"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return Wo(orderId, station, timeFrom, group)
 	}
-	Metrics["WoCount"] = func(orderId string, station string, timeFrom string) interface{} {
-		return WoCount(orderId, station, timeFrom)
+	Metrics["WoCount"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return WoCount(orderId, station, timeFrom, group)
 	}
-	Metrics["CompletedWo"] = func(orderId string, station string, timeFrom string) interface{} {
-		return CompletedWo(orderId, station, timeFrom)
+	Metrics["CompletedWo"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return CompletedWo(orderId, station, timeFrom, group)
 	}
-	Metrics["CompletedWoCount"] = func(orderId string, station string, timeFrom string) interface{} {
-		return CompletedWoCount(orderId, station, timeFrom)
+	Metrics["CompletedWoCount"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return CompletedWoCount(orderId, station, timeFrom, group)
 	}
-	Metrics["ExecutionWo"] = func(orderId string, station string, timeFrom string) interface{} {
-		return ExecutionWo(orderId, station, timeFrom)
+	Metrics["ExecutionWo"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return ExecutionWo(orderId, station, timeFrom, group)
 	}
-	Metrics["ExecutionWoCount"] = func(orderId string, station string, timeFrom string) interface{} {
-		return ExecutionWoCount(orderId, station, timeFrom)
+	Metrics["ExecutionWoCount"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return ExecutionWoCount(orderId, station, timeFrom, group)
 	}
-	Metrics["IdleWo"] = func(orderId string, station string, timeFrom string) interface{} {
-		return IdleWo(orderId, station)
+	Metrics["IdleWo"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return IdleWo(orderId, station, timeFrom, group)
 	}
-	Metrics["DefecRateWOProcess"] = func(orderId string, station string, timeFrom string) interface{} {
-		return DefecRateWOProcess(orderId, station)
+	Metrics["DefecRateWOProcess"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return DefecRateWOProcess(orderId, station, timeFrom, group)
 	}
-	Metrics["CompletedMo"] = func(orderId string, station string, timeFrom string) interface{} {
-		return CompletedMo(orderId, station)
+	Metrics["CompletedMo"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return CompletedMo(orderId, station, timeFrom, group)
 	}
-	Metrics["CompletedMoCount"] = func(orderId string, station string, timeFrom string) interface{} {
-		return CompletedMoCount(orderId, station)
+	Metrics["CompletedMoCount"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return CompletedMoCount(orderId, station, timeFrom, group)
 	}
-	Metrics["OperationSpot"] = func(orderId string, station string, timeFrom string) interface{} {
-		return OperationSpot(orderId, station)
+	Metrics["OperationSpot"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return OperationSpot(orderId, station, timeFrom, group)
 	}
-	Metrics["Wolist"] = func(orderId string, station string, timeFrom string) interface{} {
-		return Wolist(orderId, station)
+	Metrics["Wolist"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return Wolist(orderId, station, timeFrom, group)
 	}
-	Metrics["OpenWoCount"] = func(orderId string, station string, timeFrom string) interface{} {
-		return OpenWoCount(orderId, station, timeFrom)
+	Metrics["OpenWoCount"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return OpenWoCount(orderId, station, timeFrom, group)
 	}
-	Metrics["Counts"] = func(orderId string, station string, timeFrom string) interface{} {
-		return GetCounts(orderId, station)
+	Metrics["Counts"] = func(orderId string, station string, timeFrom string, group string) interface{} {
+		return GetCounts(orderId, station, timeFrom, group)
 	}
 }
 
@@ -93,10 +93,10 @@ func getMetrics() (ss []string) {
 	return
 }
 
-func doFuncByMetric(target, orderId, station string, timeFrom string) interface{} {
+func doFuncByMetric(target, orderId, station string, timeFrom string, group string) interface{} {
 	for k, funcs := range Metrics {
 		if k == target {
-			return funcs(orderId, station, timeFrom)
+			return funcs(orderId, station, timeFrom, group)
 		}
 	}
 	return nil
