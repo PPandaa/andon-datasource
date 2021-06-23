@@ -11,7 +11,7 @@ var Url string
 
 func Start() {
 	Url = os.Getenv("API_URL")
-	log.Println("url=", Url)
+	log.Println("API_URL=", Url)
 }
 
 var Metrics map[string]func(orderId string, station string, timeFrom string, group string) interface{}
