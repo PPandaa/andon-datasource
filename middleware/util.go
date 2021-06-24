@@ -152,7 +152,8 @@ func JsonAryToMap(myjson []byte) []map[string]interface{} {
 }
 
 func PrintParameterCyan(i ...interface{}) {
-	fmt.Println(aurora.Cyan("query parameter---"))
+	fmt.Println()
+	fmt.Println(aurora.Cyan("resuqest parameter---"))
 	fmt.Println(aurora.Cyan(i))
 }
 func PrintParameter(i ...interface{}) {

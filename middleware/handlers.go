@@ -50,19 +50,15 @@ func Query(w http.ResponseWriter, r *http.Request) {
 		//orderId
 		targetOrderId := requestBody.Get("targets").GetIndex(indexOfTargets).Get("orderId").MustString()
 		if targetOrderId != "" {
-			//get scopedVars OrderId
 			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
 			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "orderId.value").String()
-			// fmt.Println("orderId value:", scopedVarsJsonValue)
 			orderId = scopedVarsJsonValue
 		}
 		//station
 		targetStation := requestBody.Get("targets").GetIndex(indexOfTargets).Get("stationId").MustString()
 		if targetStation != "" {
-			//get scopedVars OrderId
 			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
 			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "machineId.value").String() //#注意stationId對應的是machineId
-			// fmt.Println("station value:", scopedVarsJsonValue)
 			station = scopedVarsJsonValue
 		}
 		// time
@@ -70,16 +66,13 @@ func Query(w http.ResponseWriter, r *http.Request) {
 			// from 不會放在target裡面
 			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
 			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "__from.value").String()
-			// fmt.Println("time from value:", scopedVarsJsonValue)
 			timeFrom = scopedVarsJsonValue
 		}()
-		//station
-		targetGroup := requestBody.Get("targets").GetIndex(indexOfTargets).Get("group").MustString()
+		//group
+		targetGroup := requestBody.Get("targets").GetIndex(indexOfTargets).Get("groupId").MustString()
 		if targetGroup != "" {
-			//get scopedVars OrderId
 			scopedVarsJson, _ := requestBody.Get("scopedVars").MarshalJSON()
-			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "machineId.value").String() //#注意stationId對應的是machineId
-			// fmt.Println("station value:", scopedVarsJsonValue)
+			scopedVarsJsonValue := gjson.GetBytes(scopedVarsJson, "groupId.value").String()
 			group = scopedVarsJsonValue
 		}
 
