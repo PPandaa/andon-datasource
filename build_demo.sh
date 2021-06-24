@@ -21,3 +21,11 @@ docker push $DOCKER_REPO:$VERSION
 # docker push $HARBOR_REPO:latest
 
 # docker rmi -f $(docker images | grep $CONTAINER | awk '{print $3}')
+
+function GetPodAndDelete {
+	local podkey=$1
+	local podname=$(kubectl get po -o name | grep ${podkey})
+	echo ${podname}
+    kubectl delete ${podname}
+}
+GetPodAndDelete sfc-datasource

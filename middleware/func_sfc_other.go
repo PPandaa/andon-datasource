@@ -44,8 +44,6 @@ func trigger(api string, bodyParameter interface{}) (grafanaData map[string]inte
 		return nil, err
 	}
 
-	PrintParameter("trigger response:", string(res))
-
 	err = json.Unmarshal(res, &grafanaData)
 	if err != nil {
 		glog.Error(err)
