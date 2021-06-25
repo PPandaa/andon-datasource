@@ -108,17 +108,18 @@ func OpenWoCount(orderId, station, timeFrom, group string) map[string]interface{
 }
 
 func concateUrl(api, orderId, station, timeFrom, group string) string {
+	api = api + "?"
 	if orderId != "" {
-		api = api + "?workorderId=" + orderId + "&"
+		api = api + "workorderId=" + orderId + "&"
 	}
 	if station != "" {
-		api = api + "?station=" + station + "&"
+		api = api + "station=" + station + "&"
 	}
 	if timeFrom != "" {
-		api = api + "?timeFrom=" + timeFrom + "&"
+		api = api + "timeFrom=" + timeFrom + "&"
 	}
 	if group != "" {
-		api = api + "?group=" + group + "&"
+		api = api + "group=" + group + "&"
 	}
 	PrintParameter("---------url:", api, "-----------")
 	return api
