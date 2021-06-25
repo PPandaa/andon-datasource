@@ -914,13 +914,21 @@ func V2_Panel9(groupID string) map[string]interface{} {
 		row = append(row, eventLatestResult["AbnormalSolution"])
 		row = append(row, eventLatestResult["AbnormalCode"])
 		row = append(row, eventLatestResult["AbnormalPosition"])
-
-		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["WIP_NO"])
-		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["UNIT_NO"])
-		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["PLAN_QTY"])
-		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["MODEL_NO"])
-		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["LINE_DESC"])
-		row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["ITEM_NO"])
+		if eventLatestResult["Parameters"] != nil {
+			row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["WIP_NO"])
+			row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["UNIT_NO"])
+			row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["PLAN_QTY"])
+			row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["MODEL_NO"])
+			row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["LINE_DESC"])
+			row = append(row, eventLatestResult["Parameters"].(map[string]interface{})["ITEM_NO"])
+		} else {
+			row = append(row, nil)
+			row = append(row, nil)
+			row = append(row, nil)
+			row = append(row, nil)
+			row = append(row, nil)
+			row = append(row, nil)
+		}
 		// fmt.Println(row)
 		rows = append(rows, row)
 	}

@@ -64,3 +64,4 @@
 [2021-06-09 16:46:50] 1.0.15 => dev {test}
 [2021-06-09 17:55:29] 1.0.16 => dev {On-Premise Complete}
 [2021-06-23 14:37:17] 1.0.17 => dev {change V2_Panel9 => add Parameters}
+[2021-06-25 10:17:13] 1.0.18 => dev {change V2_Panel9 => add eventLatestResult["Parameters"] != nil}
